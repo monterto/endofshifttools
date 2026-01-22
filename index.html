@@ -374,17 +374,18 @@
     const pigEmojis = ["🐽", "🐖", "🐷"];
     document.getElementById('hubEmoji').textContent = pigEmojis[Math.floor(Math.random() * pigEmojis.length)];
 
-    function openInfoModal() {
+    // Make functions globally available
+    window.openInfoModal = function() {
       document.getElementById('infoModal').classList.add('show');
-    }
+    };
 
-    function closeInfoModal(event) {
+    window.closeInfoModal = function(event) {
       if (!event || event.target.id === 'infoModal') {
         document.getElementById('infoModal').classList.remove('show');
       }
-    }
+    };
 
-    function loadApp(appName) {
+    window.loadApp = function(appName) {
       document.getElementById('hubView').style.display = 'none';
       document.getElementById('appView').classList.add('active');
       
@@ -403,15 +404,15 @@
         container.innerHTML = getEndOfDayHTML();
         initEndOfDay();
       }
-    }
+    };
 
-    function backToHub() {
+    window.backToHub = function() {
       document.getElementById('appView').classList.remove('active');
       document.getElementById('hubView').style.display = 'flex';
       document.getElementById('appContainer').innerHTML = '';
-    }
+    };
 
-    function getTipCalcHTML() {
+    window.getTipCalcHTML = function() {
       return `
 <style>
   .tip-app {
@@ -628,9 +629,9 @@
 
   <div class="tip-pig" id="pigDisplay"></div>
 </div>`;
-    }
+    };
 
-    function initTipCalc() {
+    window.initTipCalc = function() {
       const DEFAULT_BOH = 5;
       const DEFAULT_FOH = 3;
 
@@ -742,9 +743,9 @@
       );
 
       loadPreset();
-    }
+    };
 
-    function getHoursCalcHTML() {
+    window.getHoursCalcHTML = function() {
       return `
 <style>
   .hours-app {
@@ -841,9 +842,9 @@
 
   <div class="hours-bounce" id="emojiDisplay"></div>
 </div>`;
-    }
+    };
 
-    function initHoursCalc() {
+    window.initHoursCalc = function() {
       const pigEmojis = ["🐽", "🐖", "🐷"];
       const clockEmojis = ["⏰", "🕐", "⏳"];
       document.getElementById('emojiDisplay').textContent = 
@@ -911,9 +912,9 @@
       breakInput.addEventListener('input', updateHours);
 
       updateHours();
-    }
+    };
 
-    function getEndOfDayHTML() {
+    window.getEndOfDayHTML = function() {
       return `
 <style>
   .eod-app {
