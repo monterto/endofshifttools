@@ -30,12 +30,12 @@ body {
   align-items: center;
   justify-content: center;
   min-height: 100vh;
-  padding: 2rem 1rem;
+  padding: 1.5rem 1rem;
 }
 
 .hub-header {
   text-align: center;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 }
 
 .hub-header h1 {
@@ -160,7 +160,7 @@ body {
   background: var(--card);
   border: 1px solid var(--border);
   border-radius: 16px;
-  padding: 2rem;
+  padding: 1.5rem;
   cursor: pointer;
   transition: all 0.3s ease;
   position: relative;
@@ -190,20 +190,20 @@ body {
 }
 
 .app-icon {
-  font-size: 3rem;
-  margin-bottom: 1rem;
+  font-size: 2.5rem;
+  margin-bottom: 0.75rem;
   display: block;
 }
 
 .app-card h3 {
-  font-size: 1.3rem;
-  margin-bottom: 0.5rem;
+  font-size: 1.2rem;
+  margin-bottom: 0.4rem;
 }
 
 .app-card p {
   color: var(--muted);
-  font-size: 0.9rem;
-  line-height: 1.5;
+  font-size: 0.85rem;
+  line-height: 1.4;
 }
 
 /* App View */
@@ -260,10 +260,36 @@ body {
 /* Mobile Responsive */
 @media (max-width: 640px) {
   .hub-header h1 {
-    font-size: 2rem;
+    font-size: 1.75rem;
+  }
+  
+  .hub-header {
+    margin-bottom: 1.5rem;
+  }
+  
+  #hubView {
+    padding: 1rem;
   }
   
   .app-grid {
     grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .app-card {
+    padding: 1.25rem;
+  }
+  
+  .app-icon {
+    font-size: 2.25rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .app-card h3 {
+    font-size: 1.1rem;
+  }
+  
+  .app-card p {
+    font-size: 0.8rem;
   }
 }
