@@ -359,7 +359,7 @@
 
   <div id="appView">
     <div class="app-header">
-      <button class="back-btn" onclick="backToHub()">
+      <button class="back-btn" id="backBtn">
         <span>←</span>
         <span>Back to Hub</span>
       </button>
@@ -380,6 +380,9 @@
       document.getElementById('tipCalcCard').addEventListener('click', () => loadApp('tipcalc'));
       document.getElementById('hoursCalcCard').addEventListener('click', () => loadApp('hourscalc'));
       document.getElementById('endOfDayCard').addEventListener('click', () => loadApp('endofday'));
+      
+      // Back button
+      document.getElementById('backBtn').addEventListener('click', backToHub);
       
       // Info modal
       document.getElementById('infoBtn').addEventListener('click', openInfoModal);
