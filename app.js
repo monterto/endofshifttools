@@ -3,8 +3,7 @@
 // ============================================
 
 // Randomize hub emoji on load
-const pigEmojis = ["🐽", "🐖", "🐷"];
-document.getElementById('hubEmoji').textContent = pigEmojis[Math.floor(Math.random() * pigEmojis.length)];
+document.getElementById('hubEmoji').textContent = "🐖";
 
 // Event listeners - wait for DOM to load
 document.addEventListener('DOMContentLoaded', function() {
