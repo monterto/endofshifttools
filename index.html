@@ -308,19 +308,19 @@
     </div>
 
     <div class="app-grid">
-      <div class="app-card" onclick="loadApp('tipcalc')">
+      <div class="app-card" id="tipCalcCard">
         <span class="app-icon">💰</span>
         <h3>Tip Breakdown</h3>
         <p>Calculate tip distribution between BoH, FoH, and final tips</p>
       </div>
 
-      <div class="app-card" onclick="loadApp('hourscalc')">
+      <div class="app-card" id="hoursCalcCard">
         <span class="app-icon">⏰</span>
         <h3>Hours Calculator</h3>
         <p>Track work hours with exact and rounded time</p>
       </div>
 
-      <div class="app-card" onclick="loadApp('endofday')">
+      <div class="app-card" id="endOfDayCard">
         <span class="app-icon">📊</span>
         <h3>End of Day</h3>
         <p>Calculate hourly rate from hours and tips</p>
@@ -374,18 +374,32 @@
     const pigEmojis = ["🐽", "🐖", "🐷"];
     document.getElementById('hubEmoji').textContent = pigEmojis[Math.floor(Math.random() * pigEmojis.length)];
 
-    // Make functions globally available
-    window.openInfoModal = function() {
+    // Event listeners instead of inline onclick
+    document.addEventListener('DOMContentLoaded', function() {
+      // App cards
+      document.getElementById('tipCalcCard').addEventListener('click', () => loadApp('tipcalc'));
+      document.getElementById('hoursCalcCard').addEventListener('click', () => loadApp('hourscalc'));
+      document.getElementById('endOfDayCard').addEventListener('click', () => loadApp('endofday'));
+      
+      // Info modal
+      document.getElementById('infoBtn').addEventListener('click', openInfoModal);
+      document.getElementById('closeModalBtn').addEventListener('click', closeInfoModal);
+      document.getElementById('infoModal').addEventListener('click', function(e) {
+        if (e.target.id === 'infoModal') {
+          closeInfoModal();
+        }
+      });
+    });
+
+    function openInfoModal() {
       document.getElementById('infoModal').classList.add('show');
-    };
+    }
 
-    window.closeInfoModal = function(event) {
-      if (!event || event.target.id === 'infoModal') {
-        document.getElementById('infoModal').classList.remove('show');
-      }
-    };
+    function closeInfoModal() {
+      document.getElementById('infoModal').classList.remove('show');
+    }
 
-    window.loadApp = function(appName) {
+    function loadApp(appName) {
       document.getElementById('hubView').style.display = 'none';
       document.getElementById('appView').classList.add('active');
       
@@ -404,15 +418,15 @@
         container.innerHTML = getEndOfDayHTML();
         initEndOfDay();
       }
-    };
+    }
 
-    window.backToHub = function() {
+    function backToHub() {
       document.getElementById('appView').classList.remove('active');
       document.getElementById('hubView').style.display = 'flex';
       document.getElementById('appContainer').innerHTML = '';
-    };
+    }
 
-    window.getTipCalcHTML = function() {
+    function getTipCalcHTML() {
       return `
 <style>
   .tip-app {
@@ -629,9 +643,9 @@
 
   <div class="tip-pig" id="pigDisplay"></div>
 </div>`;
-    };
+    }
 
-    window.initTipCalc = function() {
+    function initTipCalc() {
       const DEFAULT_BOH = 5;
       const DEFAULT_FOH = 3;
 
@@ -743,9 +757,9 @@
       );
 
       loadPreset();
-    };
+    }
 
-    window.getHoursCalcHTML = function() {
+    function getHoursCalcHTML() {
       return `
 <style>
   .hours-app {
@@ -842,9 +856,9 @@
 
   <div class="hours-bounce" id="emojiDisplay"></div>
 </div>`;
-    };
+    }
 
-    window.initHoursCalc = function() {
+    function initHoursCalc() {
       const pigEmojis = ["🐽", "🐖", "🐷"];
       const clockEmojis = ["⏰", "🕐", "⏳"];
       document.getElementById('emojiDisplay').textContent = 
@@ -912,9 +926,9 @@
       breakInput.addEventListener('input', updateHours);
 
       updateHours();
-    };
+    }
 
-    window.getEndOfDayHTML = function() {
+    function getEndOfDayHTML() {
       return `
 <style>
   .eod-app {
