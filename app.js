@@ -29,6 +29,12 @@ document.addEventListener('DOMContentLoaded', function() {
       closeInfoModal();
     }
   });
+  
+  // Check if we should restore last app
+  const lastApp = localStorage.getItem('lastActiveApp');
+  if (lastApp && (lastApp === 'tipcalc' || lastApp === 'hourscalc' || lastApp === 'endofday')) {
+    loadApp(lastApp);
+  }
 });
 
 function openInfoModal() {
@@ -42,6 +48,9 @@ function closeInfoModal() {
 function loadApp(appName) {
   document.getElementById('hubView').style.display = 'none';
   document.getElementById('appView').classList.add('active');
+  
+  // Save which app is active
+  localStorage.setItem('lastActiveApp', appName);
   
   const container = document.getElementById('appContainer');
   
@@ -64,6 +73,9 @@ function backToHub() {
   document.getElementById('appView').classList.remove('active');
   document.getElementById('hubView').style.display = 'flex';
   document.getElementById('appContainer').innerHTML = '';
+  
+  // Clear last active app when returning to hub
+  localStorage.removeItem('lastActiveApp');
 }
 
 // ============================================
@@ -277,6 +289,12 @@ function getTipCalcHTML() {
     </div>
   </div>
 
+  <div class="tip-buttons" style="margin-top: 0.5rem;">
+    <button class="tip-btn" id="saveToEndOfDay" style="grid-column: span 2; background-color: var(--accent); color: white; border-color: var(--accent);">
+      💾 Save Tips to End of Day
+    </button>
+  </div>
+
   <div class="tip-pig" id="pigDisplay"></div>
 </div>`;
 }
@@ -299,7 +317,9 @@ function initTipCalc() {
   const clearBtn = document.getElementById("clearBtn");
 
   const round2 = n => Math.round(n * 100) / 100;
-  const usd = n => `$${round2(n).toFixed(2)}`;
+  const usd = n => `${round2(n).toFixed(2)}`;
+
+  let currentTipValue = 0;
 
   function validateInput(input) {
     const value = parseFloat(input.value);
@@ -330,6 +350,8 @@ function initTipCalc() {
     const boh = s * bohP;
     const foh = s * fohP;
     const tips = o - (boh + foh);
+
+    currentTipValue = tips;
 
     bohEl.textContent = usd(boh);
     fohEl.textContent = usd(foh);
@@ -379,6 +401,46 @@ function initTipCalc() {
     bohPercent.value = '';
     fohPercent.value = '';
     loadPreset();
+  });
+
+  // Save to End of Day button
+  const saveToEndOfDayBtn = document.getElementById('saveToEndOfDay');
+  saveToEndOfDayBtn.addEventListener('click', function() {
+    if (currentTipValue > 0) {
+      // Get existing End of Day data
+      const saved = localStorage.getItem('endOfDayData');
+      let data = {
+        totalHours: 0,
+        totalTips: 0,
+        hoursEntries: [],
+        tipsEntries: []
+      };
+      
+      if (saved) {
+        data = JSON.parse(saved);
+      }
+      
+      // Add the tip
+      const roundedTip = Math.round(currentTipValue * 100) / 100;
+      data.tipsEntries.push(roundedTip);
+      data.totalTips += roundedTip;
+      
+      // Save back to localStorage
+      localStorage.setItem('endOfDayData', JSON.stringify(data));
+      
+      // Visual feedback
+      saveToEndOfDayBtn.textContent = '✓ Saved to End of Day!';
+      saveToEndOfDayBtn.style.backgroundColor = '#51cf66';
+      setTimeout(function() {
+        saveToEndOfDayBtn.textContent = '💾 Save Tips to End of Day';
+        saveToEndOfDayBtn.style.backgroundColor = 'var(--accent)';
+      }, 2000);
+    } else {
+      saveToEndOfDayBtn.textContent = '⚠️ Calculate tips first';
+      setTimeout(function() {
+        saveToEndOfDayBtn.textContent = '💾 Save Tips to End of Day';
+      }, 2000);
+    }
   });
 
   const pigs = ["🐽", "🐖", "🐷"];
@@ -448,6 +510,21 @@ function getHoursCalcHTML() {
     animation: bounce 1.5s ease-in-out infinite;
     text-align: center;
   }
+  .hours-save-btn {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.75rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.5rem;
+  }
+  .hours-save-btn:hover {
+    background-color: #3d8fe6;
+  }
   @keyframes bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-6px); }
@@ -487,9 +564,13 @@ function getHoursCalcHTML() {
   <div class="hours-field">
     <label>Rounded Time</label>
     <div class="hours-output">
-      <strong id="roundedTime">0.0h</strong>
+      <strong id="roundedTime">0.00h</strong>
     </div>
   </div>
+
+  <button class="hours-save-btn" id="saveHoursToEndOfDay">
+    💾 Save Hours to End of Day
+  </button>
 
   <div class="hours-bounce" id="emojiDisplay"></div>
 </div>`;
@@ -508,6 +589,8 @@ function initHoursCalc() {
   const exactDiv = document.getElementById('exactTime');
   const afterBreakDiv = document.getElementById('afterBreak');
   const roundedDiv = document.getElementById('roundedTime');
+  
+  let currentRoundedHours = 0;
 
   function updateHours() {
     const startVal = startInput.value;
@@ -517,7 +600,8 @@ function initHoursCalc() {
     if (!startVal || !endVal) {
       exactDiv.textContent = "0h 0m";
       afterBreakDiv.textContent = "0h 0m";
-      roundedDiv.textContent = "0.0h";
+      roundedDiv.textContent = "0.00h";
+      currentRoundedHours = 0;
       return;
     }
 
@@ -553,13 +637,53 @@ function initHoursCalc() {
 
     var decimalHours = workMin / 60;
     const roundedHours = Math.floor(decimalHours * 4) / 4;
-
+    
+    currentRoundedHours = roundedHours;
     roundedDiv.textContent = roundedHours.toFixed(2) + "h";
   }
 
   startInput.addEventListener('change', updateHours);
   endInput.addEventListener('change', updateHours);
   breakInput.addEventListener('input', updateHours);
+
+  // Save to End of Day button
+  const saveHoursBtn = document.getElementById('saveHoursToEndOfDay');
+  saveHoursBtn.addEventListener('click', function() {
+    if (currentRoundedHours > 0) {
+      // Get existing End of Day data
+      const saved = localStorage.getItem('endOfDayData');
+      let data = {
+        totalHours: 0,
+        totalTips: 0,
+        hoursEntries: [],
+        tipsEntries: []
+      };
+      
+      if (saved) {
+        data = JSON.parse(saved);
+      }
+      
+      // Add the hours
+      data.hoursEntries.push(currentRoundedHours);
+      data.totalHours += currentRoundedHours;
+      
+      // Save back to localStorage
+      localStorage.setItem('endOfDayData', JSON.stringify(data));
+      
+      // Visual feedback
+      saveHoursBtn.textContent = '✓ Saved to End of Day!';
+      saveHoursBtn.style.backgroundColor = '#51cf66';
+      setTimeout(function() {
+        saveHoursBtn.textContent = '💾 Save Hours to End of Day';
+        saveHoursBtn.style.backgroundColor = 'var(--accent)';
+      }, 2000);
+    } else {
+      saveHoursBtn.textContent = '⚠️ Calculate hours first';
+      setTimeout(function() {
+        saveHoursBtn.textContent = '💾 Save Hours to End of Day';
+      }, 2000);
+    }
+  });
 
   updateHours();
 }
@@ -784,6 +908,23 @@ function getEndOfDayHTML() {
     background-color: rgba(255, 107, 107, 0.1);
   }
   
+  .eod-undo-btn {
+    background-color: #0c0e13;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.65rem;
+    color: var(--text);
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.85rem;
+    font-weight: 500;
+  }
+  
+  .eod-undo-btn:hover {
+    border-color: var(--accent);
+    background-color: rgba(77, 163, 255, 0.2);
+  }
+  
   .eod-pig {
     margin-top: 0.5rem;
     text-align: center;
@@ -873,6 +1014,10 @@ function getEndOfDayHTML() {
   
   <button class="eod-reset-btn" id="resetBtn">Clear All Data</button>
   
+  <button class="eod-undo-btn" id="undoBtn" style="display: none; margin-top: 0.5rem; background-color: rgba(77, 163, 255, 0.1); border-color: var(--accent); color: var(--accent);">
+    ↶ Undo Last Delete
+  </button>
+  
   <div class="eod-pig" id="pigDisplay"></div>
 </div>`;
 }
@@ -888,6 +1033,9 @@ function initEndOfDay() {
   var totalTips = 0;
   var hoursEntries = [];
   var tipsEntries = [];
+  
+  // Undo functionality
+  var lastDeletedItem = null; // { type: 'hours' or 'tips', index: number, value: number }
 
   function loadData() {
     const saved = localStorage.getItem('endOfDayData');
@@ -925,6 +1073,14 @@ function initEndOfDay() {
     
     renderHoursList();
     renderTipsList();
+    
+    // Show/hide undo button
+    const undoBtn = document.getElementById('undoBtn');
+    if (lastDeletedItem) {
+      undoBtn.style.display = 'block';
+    } else {
+      undoBtn.style.display = 'none';
+    }
   }
 
   function renderHoursList() {
@@ -1005,8 +1161,14 @@ function initEndOfDay() {
       hoursEntries.push(value);
       totalHours += value;
       input.value = '';
+      lastDeletedItem = null; // Clear undo when adding new item
       saveData();
       updateDisplay();
+      
+      // Auto-focus back to input
+      setTimeout(function() {
+        input.focus();
+      }, 50);
     }
   });
 
@@ -1019,8 +1181,14 @@ function initEndOfDay() {
       tipsEntries.push(rounded);
       totalTips += rounded;
       input.value = '';
+      lastDeletedItem = null; // Clear undo when adding new item
       saveData();
       updateDisplay();
+      
+      // Auto-focus back to input
+      setTimeout(function() {
+        input.focus();
+      }, 50);
     }
   });
 
@@ -1049,6 +1217,13 @@ function initEndOfDay() {
   }
 
   function deleteHoursEntry(index) {
+    // Store for undo
+    lastDeletedItem = {
+      type: 'hours',
+      index: index,
+      value: hoursEntries[index]
+    };
+    
     totalHours -= hoursEntries[index];
     hoursEntries.splice(index, 1);
     saveData();
@@ -1069,11 +1244,37 @@ function initEndOfDay() {
   }
 
   function deleteTipsEntry(index) {
+    // Store for undo
+    lastDeletedItem = {
+      type: 'tips',
+      index: index,
+      value: tipsEntries[index]
+    };
+    
     totalTips -= tipsEntries[index];
     tipsEntries.splice(index, 1);
     saveData();
     updateDisplay();
   }
+  
+  // Undo button
+  document.getElementById('undoBtn').addEventListener('click', function() {
+    if (!lastDeletedItem) return;
+    
+    if (lastDeletedItem.type === 'hours') {
+      // Restore hours entry
+      hoursEntries.splice(lastDeletedItem.index, 0, lastDeletedItem.value);
+      totalHours += lastDeletedItem.value;
+    } else if (lastDeletedItem.type === 'tips') {
+      // Restore tips entry
+      tipsEntries.splice(lastDeletedItem.index, 0, lastDeletedItem.value);
+      totalTips += lastDeletedItem.value;
+    }
+    
+    lastDeletedItem = null;
+    saveData();
+    updateDisplay();
+  });
 
   document.getElementById('resetBtn').addEventListener('click', function() {
     if (confirm('Clear all hours and tips data? This cannot be undone.')) {
@@ -1081,6 +1282,7 @@ function initEndOfDay() {
       totalTips = 0;
       hoursEntries = [];
       tipsEntries = [];
+      lastDeletedItem = null;
       localStorage.removeItem('endOfDayData');
       updateDisplay();
     }
