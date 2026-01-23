@@ -143,6 +143,13 @@ function getTipCalcHTML() {
     grid-template-columns: 1fr 1fr 40px;
     gap: 0.5rem;
     align-items: end;
+    opacity: 0.6;
+    margin-top: 0.5rem;
+    transition: opacity 0.2s;
+  }
+  
+  .tip-secondary:hover {
+    opacity: 0.9;
   }
   
   .tip-secondary .tip-field {
@@ -150,35 +157,42 @@ function getTipCalcHTML() {
   }
   
   .tip-secondary .tip-field label {
-    font-size: 0.7rem;
-    opacity: 0.8;
+    font-size: 0.65rem;
+    opacity: 0.7;
   }
   
   .tip-secondary .tip-field input {
-    padding: 0.5rem;
-    font-size: 0.95rem;
+    padding: 0.45rem;
+    font-size: 0.85rem;
+    background-color: rgba(12, 14, 19, 0.5);
+  }
+  
+  .tip-secondary .tip-field input:focus {
+    background-color: #0c0e13;
   }
   
   .tip-icon-btn {
     width: 40px;
     height: 40px;
-    background-color: #0c0e13;
+    background-color: rgba(12, 14, 19, 0.5);
     border: 1px solid var(--border);
     border-radius: 6px;
     color: var(--muted);
     cursor: pointer;
     transition: all 0.2s;
-    font-size: 1.1rem;
+    font-size: 1rem;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 0;
+    opacity: 0.7;
   }
   
   .tip-icon-btn:hover {
     border-color: var(--accent);
     color: var(--accent);
     background-color: rgba(77, 163, 255, 0.1);
+    opacity: 1;
   }
   
   .tip-icon-btn.saved {
@@ -186,6 +200,7 @@ function getTipCalcHTML() {
     color: #51cf66;
     background-color: rgba(81, 207, 102, 0.2);
     animation: pulse 0.6s ease-in-out;
+    opacity: 1;
   }
   
   @keyframes pulse {
@@ -351,19 +366,6 @@ function getTipCalcHTML() {
     </div>
   </div>
 
-  <!-- Secondary: Percentages & Settings -->
-  <div class="tip-secondary">
-    <div class="tip-field">
-      <label>BoH %</label>
-      <input id="bohPercent" type="number" step="0.01" inputmode="decimal" />
-    </div>
-    <div class="tip-field">
-      <label>FoH %</label>
-      <input id="fohPercent" type="number" step="0.01" inputmode="decimal" />
-    </div>
-    <button class="tip-icon-btn" id="savePreset" title="Save Preset">💾</button>
-  </div>
-
   <!-- Advanced: Large Party & Cash -->
   <div class="tip-advanced">
     <div class="tip-field">
@@ -374,6 +376,19 @@ function getTipCalcHTML() {
       <label>Cash</label>
       <input id="cash" type="number" step="0.01" placeholder="0.00" inputmode="decimal" />
     </div>
+  </div>
+
+  <!-- Secondary: Percentages & Settings - De-emphasized -->
+  <div class="tip-secondary">
+    <div class="tip-field">
+      <label>BoH %</label>
+      <input id="bohPercent" type="number" step="0.01" inputmode="decimal" />
+    </div>
+    <div class="tip-field">
+      <label>FoH %</label>
+      <input id="fohPercent" type="number" step="0.01" inputmode="decimal" />
+    </div>
+    <button class="tip-icon-btn" id="savePreset" title="Save Preset">💾</button>
   </div>
 
   <!-- Warning -->
