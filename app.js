@@ -181,6 +181,18 @@ function getTipCalcHTML() {
     background-color: rgba(77, 163, 255, 0.1);
   }
   
+  .tip-icon-btn.saved {
+    border-color: #51cf66;
+    color: #51cf66;
+    background-color: rgba(81, 207, 102, 0.2);
+    animation: pulse 0.6s ease-in-out;
+  }
+  
+  @keyframes pulse {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  
   /* Advanced inputs (Large Party, Cash) */
   .tip-advanced {
     display: grid;
@@ -349,13 +361,13 @@ function getTipCalcHTML() {
       <label>FoH %</label>
       <input id="fohPercent" type="number" step="0.01" inputmode="decimal" />
     </div>
-    <button class="tip-icon-btn" id="savePreset" title="Save Preset">⚙️</button>
+    <button class="tip-icon-btn" id="savePreset" title="Save Preset">💾</button>
   </div>
 
   <!-- Advanced: Large Party & Cash -->
   <div class="tip-advanced">
     <div class="tip-field">
-      <label>Large Party (auto-tip)</label>
+      <label>Large Party (1%)</label>
       <input id="largeParty" type="number" step="0.01" placeholder="0.00" inputmode="decimal" />
     </div>
     <div class="tip-field">
@@ -387,7 +399,7 @@ function getTipCalcHTML() {
 
   <!-- Action Buttons -->
   <button class="tip-save-btn" id="saveToEndOfDay">
-    💾 Save Tips to End of Day
+    → Send to End of Day
   </button>
   
   <button class="tip-icon-btn" id="clearBtn" title="Clear All" style="width: 100%; margin-top: 0.25rem;">
@@ -406,6 +418,8 @@ function initTipCalc() {
   const sales = document.getElementById("sales");
   const bohPercent = document.getElementById("bohPercent");
   const fohPercent = document.getElementById("fohPercent");
+  const largeParty = document.getElementById("largeParty");
+  const cash = document.getElementById("cash");
   const bohEl = document.getElementById("boh");
   const fohEl = document.getElementById("foh");
   const tipsEl = document.getElementById("tips");
@@ -445,10 +459,13 @@ function initTipCalc() {
     const s = parseFloat(sales.value) || 0;
     const bohP = (parseFloat(bohPercent.value) || 0) / 100;
     const fohP = (parseFloat(fohPercent.value) || 0) / 100;
+    const lp = parseFloat(largeParty.value) || 0;
+    const c = parseFloat(cash.value) || 0;
 
     const boh = s * bohP;
     const foh = s * fohP;
-    const tips = o - (boh + foh);
+    const largePartyTip = lp * 0.01; // 1% of large party value
+    const tips = o - (boh + foh) + largePartyTip + c;
 
     currentTipValue = tips;
 
@@ -487,10 +504,12 @@ function initTipCalc() {
         boh: bohVal,
         foh: fohVal
       }));
-      savePresetBtn.textContent = '✓ Saved!';
+      savePresetBtn.textContent = '✓';
+      savePresetBtn.classList.add('saved');
       setTimeout(function() {
-        savePresetBtn.textContent = 'Save Preset';
-      }, 2000);
+        savePresetBtn.textContent = '💾';
+        savePresetBtn.classList.remove('saved');
+      }, 1500);
     }
   });
 
@@ -528,26 +547,26 @@ function initTipCalc() {
       localStorage.setItem('endOfDayData', JSON.stringify(data));
       
       // Visual feedback
-      saveToEndOfDayBtn.textContent = '✓ Saved to End of Day!';
+      saveToEndOfDayBtn.textContent = '✓ Sent to End of Day!';
       saveToEndOfDayBtn.style.backgroundColor = '#51cf66';
       setTimeout(function() {
-        saveToEndOfDayBtn.textContent = '💾 Save Tips to End of Day';
+        saveToEndOfDayBtn.textContent = '→ Send to End of Day';
         saveToEndOfDayBtn.style.backgroundColor = 'var(--accent)';
       }, 2000);
     } else {
       saveToEndOfDayBtn.textContent = '⚠️ Calculate tips first';
       setTimeout(function() {
-        saveToEndOfDayBtn.textContent = '💾 Save Tips to End of Day';
+        saveToEndOfDayBtn.textContent = '→ Send to End of Day';
       }, 2000);
     }
   });
 
-  const pigs = ["🐽", "🐖", "🐷"];
+  const pigs = ["🐽", "�", "🐷"];
   const money = ["💸", "💰", "💵"];
   pigDisplay.textContent = pigs[Math.floor(Math.random() * pigs.length)] + 
                           money[Math.floor(Math.random() * money.length)];
 
-  [owed, sales, bohPercent, fohPercent].forEach(function(el) {
+  [owed, sales, bohPercent, fohPercent, largeParty, cash].forEach(function(el) {
     el.addEventListener("input", calculate);
   });
 
@@ -669,7 +688,7 @@ function getHoursCalcHTML() {
   </div>
 
   <button class="hours-save-btn" id="saveHoursToEndOfDay">
-    💾 Save Hours to End of Day
+    → Send to End of Day
   </button>
 
   <div class="hours-bounce" id="emojiDisplay"></div>
@@ -771,16 +790,16 @@ function initHoursCalc() {
       localStorage.setItem('endOfDayData', JSON.stringify(data));
       
       // Visual feedback
-      saveHoursBtn.textContent = '✓ Saved to End of Day!';
+      saveHoursBtn.textContent = '✓ Sent to End of Day!';
       saveHoursBtn.style.backgroundColor = '#51cf66';
       setTimeout(function() {
-        saveHoursBtn.textContent = '💾 Save Hours to End of Day';
+        saveHoursBtn.textContent = '→ Send to End of Day';
         saveHoursBtn.style.backgroundColor = 'var(--accent)';
       }, 2000);
     } else {
       saveHoursBtn.textContent = '⚠️ Calculate hours first';
       setTimeout(function() {
-        saveHoursBtn.textContent = '💾 Save Hours to End of Day';
+        saveHoursBtn.textContent = '→ Send to End of Day';
       }, 2000);
     }
   });
@@ -1230,7 +1249,7 @@ function initEndOfDay() {
       html += '<div class="eod-list-item">';
       html += '<div>';
       html += '<span class="eod-item-label">Entry ' + (i + 1) + '</span> ';
-      html += '<span class="eod-item-value">$' + tipsEntries[i].toFixed(2) + '</span>';
+      html += '<span class="eod-item-value"> + tipsEntries[i].toFixed(2) + '</span>';
       html += '</div>';
       html += '<div class="eod-item-actions">';
       html += '<button class="eod-item-btn" data-index="' + i + '" data-type="tips-edit">Edit</button>';
