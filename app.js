@@ -465,7 +465,7 @@ function initTipCalc() {
     const boh = s * bohP;
     const foh = s * fohP;
     const largePartyTip = lp * 0.01;
-    const tips = o - (boh + foh) + largePartyTip + c;
+    const tips = o - (boh + foh) - largePartyTip + c;
 
     currentTipValue = tips;
 
@@ -587,15 +587,20 @@ function getHoursCalcHTML() {
     flex-direction: column;
     gap: 1rem;
   }
+  
+  /* Primary inputs - emphasized */
   .hours-field {
     display: flex;
     flex-direction: column;
     gap: 0.25rem;
   }
+  
   .hours-field label {
     font-size: 0.9rem;
     color: var(--muted);
+    font-weight: 500;
   }
+  
   .hours-field input {
     width: 100%;
     background-color: #0c0e13;
@@ -605,25 +610,99 @@ function getHoursCalcHTML() {
     font-size: 1rem;
     color: var(--text);
   }
+  
   .hours-field input:focus {
     outline: none;
     border-color: var(--accent);
   }
+  
+  /* Primary time inputs - emphasized */
+  .hours-field.primary input {
+    border: 2px solid var(--border);
+    padding: 0.75rem;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+  
+  .hours-field.primary input:focus {
+    border-color: var(--accent);
+  }
+  
+  /* De-emphasized break input */
+  .hours-field.secondary {
+    opacity: 0.7;
+  }
+  
+  .hours-field.secondary label {
+    font-size: 0.8rem;
+  }
+  
+  .hours-field.secondary input {
+    padding: 0.5rem;
+    font-size: 0.9rem;
+  }
+  
+  /* De-emphasized outputs */
   .hours-output {
     background-color: #0c0e13;
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 0.6rem;
   }
+  
   .hours-output strong {
     font-size: 1.05rem;
   }
+  
+  .hours-field.deemphasized {
+    opacity: 0.5;
+  }
+  
+  .hours-field.deemphasized label {
+    font-size: 0.75rem;
+  }
+  
+  .hours-field.deemphasized .hours-output {
+    padding: 0.4rem;
+  }
+  
+  .hours-field.deemphasized .hours-output strong {
+    font-size: 0.9rem;
+  }
+  
+  /* Emphasized rounded time output */
+  .hours-field.emphasized {
+    margin-top: 0.5rem;
+  }
+  
+  .hours-field.emphasized label {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .hours-field.emphasized .hours-output {
+    background-color: #0c0e13;
+    border: 2px solid var(--accent);
+    padding: 1rem;
+    text-align: center;
+  }
+  
+  .hours-field.emphasized .hours-output strong {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent);
+  }
+  
   .hours-bounce {
     margin-top: 15px;
     font-size: 2em;
     animation: bounce 1.5s ease-in-out infinite;
     text-align: center;
   }
+  
   .hours-save-btn {
     background-color: var(--accent);
     color: white;
@@ -636,9 +715,11 @@ function getHoursCalcHTML() {
     transition: all 0.2s;
     margin-top: 0.5rem;
   }
+  
   .hours-save-btn:hover {
     background-color: #3d8fe6;
   }
+  
   @keyframes bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-6px); }
@@ -646,36 +727,36 @@ function getHoursCalcHTML() {
 </style>
 
 <div class="hours-app">
-  <div class="hours-field">
+  <div class="hours-field primary">
     <label>Start Time</label>
     <input id="start" type="time" />
   </div>
 
-  <div class="hours-field">
+  <div class="hours-field primary">
     <label>End Time</label>
     <input id="end" type="time" />
   </div>
 
-  <div class="hours-field">
+  <div class="hours-field secondary">
     <label>Break Time (minutes)</label>
     <input id="breakTime" type="number" min="0" step="1" placeholder="0" value="0" />
   </div>
 
-  <div class="hours-field">
+  <div class="hours-field deemphasized">
     <label>Exact Time Elapsed</label>
     <div class="hours-output">
       <strong id="exactTime">0h 0m</strong>
     </div>
   </div>
 
-  <div class="hours-field">
+  <div class="hours-field deemphasized">
     <label>Time After Break</label>
     <div class="hours-output">
       <strong id="afterBreak">0h 0m</strong>
     </div>
   </div>
 
-  <div class="hours-field">
+  <div class="hours-field emphasized">
     <label>Rounded Time</label>
     <div class="hours-output">
       <strong id="roundedTime">0.00h</strong>
