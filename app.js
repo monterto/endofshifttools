@@ -430,7 +430,7 @@ function initTipCalc() {
   const clearBtn = document.getElementById("clearBtn");
 
   const round2 = n => Math.round(n * 100) / 100;
-  const usd = n => `${round2(n).toFixed(2)}`;
+  const usd = n => `$${round2(n).toFixed(2)}`;
 
   let currentTipValue = 0;
 
@@ -464,7 +464,7 @@ function initTipCalc() {
 
     const boh = s * bohP;
     const foh = s * fohP;
-    const largePartyTip = lp * 0.01; // 1% of large party value
+    const largePartyTip = lp * 0.01;
     const tips = o - (boh + foh) + largePartyTip + c;
 
     currentTipValue = tips;
@@ -521,11 +521,9 @@ function initTipCalc() {
     loadPreset();
   });
 
-  // Save to End of Day button
   const saveToEndOfDayBtn = document.getElementById('saveToEndOfDay');
   saveToEndOfDayBtn.addEventListener('click', function() {
     if (currentTipValue > 0) {
-      // Get existing End of Day data
       const saved = localStorage.getItem('endOfDayData');
       let data = {
         totalHours: 0,
@@ -538,15 +536,12 @@ function initTipCalc() {
         data = JSON.parse(saved);
       }
       
-      // Add the tip
       const roundedTip = Math.round(currentTipValue * 100) / 100;
       data.tipsEntries.push(roundedTip);
       data.totalTips += roundedTip;
       
-      // Save back to localStorage
       localStorage.setItem('endOfDayData', JSON.stringify(data));
       
-      // Visual feedback
       saveToEndOfDayBtn.textContent = '✓ Sent to End of Day!';
       saveToEndOfDayBtn.style.backgroundColor = '#51cf66';
       setTimeout(function() {
@@ -561,7 +556,7 @@ function initTipCalc() {
     }
   });
 
-  const pigs = ["🐽", "�", "🐷"];
+  const pigs = ["🐽", "🐖", "🐷"];
   const money = ["💸", "💰", "💵"];
   pigDisplay.textContent = pigs[Math.floor(Math.random() * pigs.length)] + 
                           money[Math.floor(Math.random() * money.length)];
@@ -765,11 +760,9 @@ function initHoursCalc() {
   endInput.addEventListener('change', updateHours);
   breakInput.addEventListener('input', updateHours);
 
-  // Save to End of Day button
   const saveHoursBtn = document.getElementById('saveHoursToEndOfDay');
   saveHoursBtn.addEventListener('click', function() {
     if (currentRoundedHours > 0) {
-      // Get existing End of Day data
       const saved = localStorage.getItem('endOfDayData');
       let data = {
         totalHours: 0,
@@ -782,14 +775,11 @@ function initHoursCalc() {
         data = JSON.parse(saved);
       }
       
-      // Add the hours
       data.hoursEntries.push(currentRoundedHours);
       data.totalHours += currentRoundedHours;
       
-      // Save back to localStorage
       localStorage.setItem('endOfDayData', JSON.stringify(data));
       
-      // Visual feedback
       saveHoursBtn.textContent = '✓ Sent to End of Day!';
       saveHoursBtn.style.backgroundColor = '#51cf66';
       setTimeout(function() {
@@ -1153,8 +1143,7 @@ function initEndOfDay() {
   var hoursEntries = [];
   var tipsEntries = [];
   
-  // Undo functionality
-  var lastDeletedItem = null; // { type: 'hours' or 'tips', index: number, value: number }
+  var lastDeletedItem = null;
 
   function loadData() {
     const saved = localStorage.getItem('endOfDayData');
@@ -1193,7 +1182,6 @@ function initEndOfDay() {
     renderHoursList();
     renderTipsList();
     
-    // Show/hide undo button
     const undoBtn = document.getElementById('undoBtn');
     if (lastDeletedItem) {
       undoBtn.style.display = 'block';
@@ -1249,7 +1237,7 @@ function initEndOfDay() {
       html += '<div class="eod-list-item">';
       html += '<div>';
       html += '<span class="eod-item-label">Entry ' + (i + 1) + '</span> ';
-      html += '<span class="eod-item-value"> + tipsEntries[i].toFixed(2) + '</span>';
+      html += '<span class="eod-item-value">$' + tipsEntries[i].toFixed(2) + '</span>';
       html += '</div>';
       html += '<div class="eod-item-actions">';
       html += '<button class="eod-item-btn" data-index="' + i + '" data-type="tips-edit">Edit</button>';
@@ -1280,11 +1268,10 @@ function initEndOfDay() {
       hoursEntries.push(value);
       totalHours += value;
       input.value = '';
-      lastDeletedItem = null; // Clear undo when adding new item
+      lastDeletedItem = null;
       saveData();
       updateDisplay();
       
-      // Auto-focus back to input
       setTimeout(function() {
         input.focus();
       }, 50);
@@ -1300,11 +1287,10 @@ function initEndOfDay() {
       tipsEntries.push(rounded);
       totalTips += rounded;
       input.value = '';
-      lastDeletedItem = null; // Clear undo when adding new item
+      lastDeletedItem = null;
       saveData();
       updateDisplay();
       
-      // Auto-focus back to input
       setTimeout(function() {
         input.focus();
       }, 50);
@@ -1336,7 +1322,6 @@ function initEndOfDay() {
   }
 
   function deleteHoursEntry(index) {
-    // Store for undo
     lastDeletedItem = {
       type: 'hours',
       index: index,
@@ -1363,7 +1348,6 @@ function initEndOfDay() {
   }
 
   function deleteTipsEntry(index) {
-    // Store for undo
     lastDeletedItem = {
       type: 'tips',
       index: index,
@@ -1376,16 +1360,13 @@ function initEndOfDay() {
     updateDisplay();
   }
   
-  // Undo button
   document.getElementById('undoBtn').addEventListener('click', function() {
     if (!lastDeletedItem) return;
     
     if (lastDeletedItem.type === 'hours') {
-      // Restore hours entry
       hoursEntries.splice(lastDeletedItem.index, 0, lastDeletedItem.value);
       totalHours += lastDeletedItem.value;
     } else if (lastDeletedItem.type === 'tips') {
-      // Restore tips entry
       tipsEntries.splice(lastDeletedItem.index, 0, lastDeletedItem.value);
       totalTips += lastDeletedItem.value;
     }
