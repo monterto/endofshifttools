@@ -97,16 +97,26 @@ function getTipCalcHTML() {
     flex-direction: column;
     gap: 0.75rem;
   }
+  
+  /* Primary Inputs Section */
+  .tip-primary-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  
   .tip-field {
     display: flex;
     flex-direction: column;
     gap: 0.2rem;
   }
+  
   .tip-field label {
     font-size: 0.8rem;
     color: var(--muted);
     font-weight: 500;
   }
+  
   .tip-field input {
     width: 100%;
     background-color: #0c0e13;
@@ -117,75 +127,78 @@ function getTipCalcHTML() {
     color: var(--text);
     font-weight: 600;
   }
+  
   .tip-field input:focus {
     outline: none;
     border-color: var(--accent);
   }
+  
   .tip-field input.error {
     border-color: var(--warning);
   }
-  .percent-row {
+  
+  /* Secondary Inputs - Percentages & Advanced */
+  .tip-secondary {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1fr 40px;
     gap: 0.5rem;
+    align-items: end;
   }
-  .tip-outputs {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-top: 0.25rem;
+  
+  .tip-secondary .tip-field {
+    gap: 0.15rem;
   }
-  .tip-output {
+  
+  .tip-secondary .tip-field label {
+    font-size: 0.7rem;
+    opacity: 0.8;
+  }
+  
+  .tip-secondary .tip-field input {
+    padding: 0.5rem;
+    font-size: 0.95rem;
+  }
+  
+  .tip-icon-btn {
+    width: 40px;
+    height: 40px;
     background-color: #0c0e13;
     border: 1px solid var(--border);
     border-radius: 6px;
-    padding: 0.75rem;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .tip-output span {
-    font-size: 0.85rem;
     color: var(--muted);
-    font-weight: 500;
-  }
-  .tip-output strong {
-    font-size: 1.3rem;
-    font-weight: 700;
-  }
-  .tip-output.negative strong {
-    color: var(--warning);
-  }
-  .tip-output.highlight {
-    border-color: var(--accent);
-    border-width: 2px;
-    padding: 0.85rem 0.75rem;
-  }
-  .tip-output.highlight strong {
-    font-size: 1.5rem;
-    color: var(--accent);
-  }
-  .tip-buttons {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-    margin-top: 0.25rem;
-  }
-  .tip-btn {
-    background-color: #0c0e13;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.65rem;
-    color: var(--text);
     cursor: pointer;
     transition: all 0.2s;
-    font-size: 0.85rem;
-    font-weight: 500;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
   }
-  .tip-btn:hover {
+  
+  .tip-icon-btn:hover {
     border-color: var(--accent);
+    color: var(--accent);
     background-color: rgba(77, 163, 255, 0.1);
   }
+  
+  /* Advanced inputs (Large Party, Cash) */
+  .tip-advanced {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  
+  .tip-advanced .tip-field label {
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+  
+  .tip-advanced .tip-field input {
+    padding: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  
   .tip-warning {
     background-color: rgba(255, 107, 107, 0.1);
     border: 1px solid var(--warning);
@@ -197,64 +210,137 @@ function getTipCalcHTML() {
     text-align: center;
     font-weight: 500;
   }
+  
   .tip-warning.show {
     display: block;
   }
+  
+  /* Outputs - Prominent Display */
+  .tip-outputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+    padding: 0.75rem;
+    background-color: #0c0e13;
+    border: 2px solid var(--border);
+    border-radius: 8px;
+  }
+  
+  .tip-output {
+    text-align: center;
+    padding: 0.5rem;
+    border-radius: 6px;
+    transition: all 0.2s;
+  }
+  
+  .tip-output span {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--muted);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 0.3rem;
+  }
+  
+  .tip-output strong {
+    display: block;
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  
+  .tip-output.highlight {
+    background-color: rgba(77, 163, 255, 0.1);
+    border: 2px solid var(--accent);
+    padding: 0.4rem;
+  }
+  
+  .tip-output.highlight span {
+    color: var(--accent);
+  }
+  
+  .tip-output.highlight strong {
+    font-size: 1.5rem;
+    color: var(--accent);
+  }
+  
+  .tip-output.negative strong {
+    color: var(--warning);
+  }
+  
+  .tip-save-btn {
+    background-color: var(--accent);
+    color: white;
+    border: none;
+    border-radius: 6px;
+    padding: 0.7rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    margin-top: 0.25rem;
+  }
+  
+  .tip-save-btn:hover {
+    background-color: #3d8fe6;
+  }
+  
   .tip-pig {
     margin-top: 0.5rem;
     text-align: center;
     font-size: 1.4rem;
     animation: bounce 2s ease-in-out infinite;
   }
+  
   @keyframes bounce {
     0%, 100% { transform: translateY(0); }
     50% { transform: translateY(-6px); }
   }
   
+  /* Mobile optimizations */
   @media (max-width: 400px) {
     .tip-app {
       padding: 0.75rem;
       gap: 0.6rem;
       margin: 0.5rem auto;
     }
+    
     .tip-field input {
       padding: 0.55rem;
       font-size: 1rem;
     }
-    .tip-output {
-      padding: 0.6rem;
+    
+    .tip-outputs {
+      padding: 0.5rem;
     }
+    
     .tip-output strong {
-      font-size: 1.2rem;
+      font-size: 1.1rem;
     }
-    .tip-output.highlight {
-      padding: 0.7rem 0.6rem;
-    }
+    
     .tip-output.highlight strong {
-      font-size: 1.35rem;
-    }
-    .tip-buttons {
-      gap: 0.4rem;
-    }
-    .tip-btn {
-      padding: 0.55rem;
-      font-size: 0.8rem;
+      font-size: 1.3rem;
     }
   }
 </style>
 
 <div class="tip-app">
-  <div class="tip-field">
-    <label>Owed</label>
-    <input id="owed" type="number" step="0.01" placeholder="0.00" inputmode="decimal" />
+  <!-- Primary Inputs: Owed & Sales -->
+  <div class="tip-primary-inputs">
+    <div class="tip-field">
+      <label>Owed</label>
+      <input id="owed" type="number" step="0.01" placeholder="0.00" inputmode="decimal" />
+    </div>
+    <div class="tip-field">
+      <label>Total Net Sales</label>
+      <input id="sales" type="number" step="0.01" placeholder="0.00" inputmode="decimal" />
+    </div>
   </div>
 
-  <div class="tip-field">
-    <label>Total Net Sales</label>
-    <input id="sales" type="number" step="0.01" placeholder="0.00" inputmode="decimal" />
-  </div>
-
-  <div class="percent-row">
+  <!-- Secondary: Percentages & Settings -->
+  <div class="tip-secondary">
     <div class="tip-field">
       <label>BoH %</label>
       <input id="bohPercent" type="number" step="0.01" inputmode="decimal" />
@@ -263,17 +349,27 @@ function getTipCalcHTML() {
       <label>FoH %</label>
       <input id="fohPercent" type="number" step="0.01" inputmode="decimal" />
     </div>
+    <button class="tip-icon-btn" id="savePreset" title="Save Preset">⚙️</button>
   </div>
 
-  <div class="tip-buttons">
-    <button class="tip-btn" id="savePreset">Save Preset</button>
-    <button class="tip-btn" id="clearBtn">Clear All</button>
+  <!-- Advanced: Large Party & Cash -->
+  <div class="tip-advanced">
+    <div class="tip-field">
+      <label>Large Party (auto-tip)</label>
+      <input id="largeParty" type="number" step="0.01" placeholder="0.00" inputmode="decimal" />
+    </div>
+    <div class="tip-field">
+      <label>Cash</label>
+      <input id="cash" type="number" step="0.01" placeholder="0.00" inputmode="decimal" />
+    </div>
   </div>
 
+  <!-- Warning -->
   <div class="tip-warning" id="warningBox">
     ⚠️ Final tips are negative!
   </div>
 
+  <!-- Outputs - Prominent Card -->
   <div class="tip-outputs">
     <div class="tip-output">
       <span>BoH</span>
@@ -284,16 +380,19 @@ function getTipCalcHTML() {
       <strong id="foh">$0.00</strong>
     </div>
     <div class="tip-output highlight" id="tipsOutput">
-      <span>Final Tips</span>
+      <span>Tips</span>
       <strong id="tips">$0.00</strong>
     </div>
   </div>
 
-  <div class="tip-buttons" style="margin-top: 0.5rem;">
-    <button class="tip-btn" id="saveToEndOfDay" style="grid-column: span 2; background-color: var(--accent); color: white; border-color: var(--accent);">
-      💾 Save Tips to End of Day
-    </button>
-  </div>
+  <!-- Action Buttons -->
+  <button class="tip-save-btn" id="saveToEndOfDay">
+    💾 Save Tips to End of Day
+  </button>
+  
+  <button class="tip-icon-btn" id="clearBtn" title="Clear All" style="width: 100%; margin-top: 0.25rem;">
+    🗑️ Clear All
+  </button>
 
   <div class="tip-pig" id="pigDisplay"></div>
 </div>`;
@@ -454,6 +553,7 @@ function initTipCalc() {
 
   loadPreset();
 }
+
 // ============================================
 // HOURS CALCULATOR
 // ============================================
