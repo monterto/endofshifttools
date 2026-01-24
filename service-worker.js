@@ -1,5 +1,5 @@
-const CACHE_NAME = 'calculator-hub-v4';
-const RUNTIME_CACHE = 'calculator-hub-runtime-v4';
+const CACHE_NAME = 'calculator-hub-v5';
+const RUNTIME_CACHE = 'calculator-hub-runtime-v5';
 
 // List of files to cache for offline use
 const urlsToCache = [
