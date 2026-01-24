@@ -86,9 +86,6 @@ body {
 
 /* App-specific info buttons */
 .app-info-btn {
-  position: fixed;
-  top: 5rem;
-  right: 1rem;
   width: 48px;
   height: 48px;
   background: linear-gradient(135deg, var(--accent), #5b8ef6);
@@ -100,7 +97,6 @@ body {
   cursor: pointer;
   box-shadow: 0 4px 16px rgba(77, 163, 255, 0.4);
   transition: all 0.3s ease;
-  z-index: 500;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -452,8 +448,6 @@ body {
   .app-info-btn {
     width: 42px;
     height: 42px;
-    top: 4.5rem;
-    right: 0.75rem;
   }
   
   .app-info-btn::before {
@@ -467,5 +461,9 @@ body {
   .app-info-list li {
     padding: 0.6rem 0;
     font-size: 0.9rem;
+  }
+  
+  .back-btn span:last-child {
+    display: none;
   }
 }
