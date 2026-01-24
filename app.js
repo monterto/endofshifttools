@@ -2,6 +2,9 @@
 // MAIN APP INITIALIZATION
 // ============================================
 
+// Debug flag - set to true to enable manual testing of clear data prompt
+const ENABLE_DEBUG_TRIGGER = false;
+
 // Randomize hub emoji on load
 document.getElementById('hubEmoji').textContent = "🐖";
 
@@ -55,15 +58,19 @@ document.addEventListener('DOMContentLoaded', function() {
   // Check for old data first
   checkForOldData();
   
-  // Manual trigger - click hub emoji to test
-  document.getElementById('hubEmoji').addEventListener('click', function() {
-    const saved = localStorage.getItem('endOfDayData');
-    if (saved) {
-      const data = JSON.parse(saved);
-      const age = data.sessionStartTime ? Date.now() - data.sessionStartTime : 0;
-      showClearDataModal(age);
-    }
-  });
+  // Manual trigger - click hub emoji to test (only if debug enabled)
+  if (ENABLE_DEBUG_TRIGGER) {
+    const hubEmoji = document.getElementById('hubEmoji');
+    hubEmoji.classList.add('debug-enabled');
+    hubEmoji.addEventListener('click', function() {
+      const saved = localStorage.getItem('endOfDayData');
+      if (saved) {
+        const data = JSON.parse(saved);
+        const age = data.sessionStartTime ? Date.now() - data.sessionStartTime : 0;
+        showClearDataModal(age);
+      }
+    });
+  }
   
   // App cards
   document.getElementById('tipCalcCard').addEventListener('click', function() {
