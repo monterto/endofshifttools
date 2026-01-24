@@ -47,16 +47,16 @@ body {
   background-clip: text;
 }
 
-#hubEmoji {
+#hubEmoji.debug-enabled {
   cursor: pointer;
   transition: transform 0.2s;
 }
 
-#hubEmoji:hover {
+#hubEmoji.debug-enabled:hover {
   transform: scale(1.1);
 }
 
-#hubEmoji:active {
+#hubEmoji.debug-enabled:active {
   transform: scale(0.95);
 }
 
