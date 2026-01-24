@@ -410,8 +410,6 @@ function getTipCalcHTML() {
     🗑️ Clear All
   </button>
 
-  <button class="app-info-btn" id="tipCalcInfoBtn" title="Field Explanations"></button>
-
   <div class="tip-pig" id="pigDisplay"></div>
 </div>
 
@@ -428,6 +426,7 @@ function getTipCalcHTML() {
       <li><strong>Cash</strong> - Cash tips received (added to your final tips)</li>
       <li><strong>BoH %</strong> - Percentage of sales going to Back of House staff</li>
       <li><strong>FoH %</strong> - Percentage of sales going to Support staff</li>
+      <li><strong>Save Button (💾)</strong> - Saves BoH% and FoH%</li>
       <li><strong>BoH (output)</strong> - Calculated amount going to Back of House</li>
       <li><strong>FoH (output)</strong> - Calculated amount going to Support</li>
       <li><strong>Tips (output)</strong> - Final tips to the tip pool</li>
@@ -594,14 +593,14 @@ function initTipCalc() {
     el.addEventListener("input", calculate);
   });
 
-  // Info modal
-  const tipCalcInfoBtn = document.getElementById('tipCalcInfoBtn');
+  // Info modal - use header button
+  const appInfoBtn = document.getElementById('appInfoBtn');
   const tipCalcInfoModal = document.getElementById('tipCalcInfoModal');
   const closeTipCalcInfoBtn = document.getElementById('closeTipCalcInfoBtn');
   
-  tipCalcInfoBtn.addEventListener('click', function() {
+  appInfoBtn.onclick = function() {
     tipCalcInfoModal.classList.add('show');
-  });
+  };
   
   closeTipCalcInfoBtn.addEventListener('click', function() {
     tipCalcInfoModal.classList.remove('show');
@@ -810,8 +809,6 @@ function getHoursCalcHTML() {
     → Send to End of Day
   </button>
 
-  <button class="app-info-btn" id="hoursCalcInfoBtn" title="Field Explanations"></button>
-
   <div class="hours-bounce" id="emojiDisplay"></div>
 </div>
 
@@ -903,14 +900,14 @@ function initHoursCalc() {
   endInput.addEventListener('change', updateHours);
   breakInput.addEventListener('input', updateHours);
 
-  // Info modal
-  const hoursCalcInfoBtn = document.getElementById('hoursCalcInfoBtn');
+  // Info modal - use header button
+  const appInfoBtn = document.getElementById('appInfoBtn');
   const hoursCalcInfoModal = document.getElementById('hoursCalcInfoModal');
   const closeHoursCalcInfoBtn = document.getElementById('closeHoursCalcInfoBtn');
   
-  hoursCalcInfoBtn.addEventListener('click', function() {
+  appInfoBtn.onclick = function() {
     hoursCalcInfoModal.classList.add('show');
-  });
+  };
   
   closeHoursCalcInfoBtn.addEventListener('click', function() {
     hoursCalcInfoModal.classList.remove('show');
@@ -1465,8 +1462,6 @@ function getEndOfDayHTML() {
     ↶ Undo Last Delete
   </button>
   
-  <button class="app-info-btn" id="eodInfoBtn" title="Field Explanations"></button>
-  
   <div class="eod-pig" id="pigDisplay"></div>
 </div>
 
@@ -1770,14 +1765,14 @@ function initEndOfDay() {
     }
   });
   
-  // Info modal
-  const eodInfoBtn = document.getElementById('eodInfoBtn');
+  // Info modal - use header button
+  const appInfoBtn = document.getElementById('appInfoBtn');
   const eodInfoModal = document.getElementById('eodInfoModal');
   const closeEodInfoBtn = document.getElementById('closeEodInfoBtn');
   
-  eodInfoBtn.addEventListener('click', function() {
+  appInfoBtn.onclick = function() {
     eodInfoModal.classList.add('show');
-  });
+  };
   
   closeEodInfoBtn.addEventListener('click', function() {
     eodInfoModal.classList.remove('show');
