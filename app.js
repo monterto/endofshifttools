@@ -1341,10 +1341,11 @@ function getEndOfDayHTML() {
       <span class="eod-summary-label">Hourly Rate</span>
       <span class="eod-summary-value eod-hourly" id="hourlyRate">$0.00</span>
     </div>
-    <button class="eod-breakdown-btn" id="showBreakdownBtn">
-      📊 View Tips Breakdown by Entry
-    </button>
   </div>
+  
+  <button class="eod-breakdown-btn" id="showBreakdownBtn">
+    📊 View Tips Breakdown by Entry
+  </button>
   
   <div class="eod-breakdown-modal" id="breakdownModal">
     <div class="eod-breakdown-content">
