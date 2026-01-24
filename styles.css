@@ -47,6 +47,19 @@ body {
   background-clip: text;
 }
 
+#hubEmoji {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+#hubEmoji:hover {
+  transform: scale(1.1);
+}
+
+#hubEmoji:active {
+  transform: scale(0.95);
+}
+
 .info-button {
   position: fixed;
   bottom: 2rem;
@@ -465,5 +478,18 @@ body {
   
   .back-btn span:last-child {
     display: none;
+  }
+  
+  .clear-data-content {
+    padding: 1.5rem;
+  }
+  
+  .clear-data-content h2 {
+    font-size: 1.1rem;
+  }
+  
+  .clear-data-buttons {
+    flex-direction: column;
+    gap: 0.5rem;
   }
 }
