@@ -410,7 +410,32 @@ function getTipCalcHTML() {
     🗑️ Clear All
   </button>
 
+  <button class="app-info-btn" id="tipCalcInfoBtn" title="Field Explanations"></button>
+
   <div class="tip-pig" id="pigDisplay"></div>
+</div>
+
+<div class="app-info-modal" id="tipCalcInfoModal">
+  <div class="app-info-content">
+    <div class="app-info-header">
+      <span class="app-info-title">Field Explanations</span>
+      <button class="app-info-close" id="closeTipCalcInfoBtn">✕</button>
+    </div>
+    <ul class="app-info-list">
+      <li><strong>Owed</strong> - Total tips owed to you from the POS system</li>
+      <li><strong>Total Net Sales</strong> - Your total net sales for the shift</li>
+      <li><strong>Large Party (1%)</strong> - Sales from large party (1% is subtracted from tips)</li>
+      <li><strong>Cash</strong> - Cash tips received (added to your final tips)</li>
+      <li><strong>BoH %</strong> - Percentage of sales going to Back of House staff</li>
+      <li><strong>FoH %</strong> - Percentage of sales going to Support staff</li>
+      <li><strong>BoH (output)</strong> - Calculated amount going to Back of House</li>
+      <li><strong>FoH (output)</strong> - Calculated amount going to Support</li>
+      <li><strong>Tips (output)</strong> - Final tips to the tip pool</li>
+    </ul>
+    <div class="app-info-formula">
+      <strong>Formula:</strong> Tips = Owed - BoH - FoH - (Large Party × 1%) + Cash
+    </div>
+  </div>
 </div>`;
 }
 
@@ -567,6 +592,25 @@ function initTipCalc() {
 
   [owed, sales, bohPercent, fohPercent, largeParty, cash].forEach(function(el) {
     el.addEventListener("input", calculate);
+  });
+
+  // Info modal
+  const tipCalcInfoBtn = document.getElementById('tipCalcInfoBtn');
+  const tipCalcInfoModal = document.getElementById('tipCalcInfoModal');
+  const closeTipCalcInfoBtn = document.getElementById('closeTipCalcInfoBtn');
+  
+  tipCalcInfoBtn.addEventListener('click', function() {
+    tipCalcInfoModal.classList.add('show');
+  });
+  
+  closeTipCalcInfoBtn.addEventListener('click', function() {
+    tipCalcInfoModal.classList.remove('show');
+  });
+  
+  tipCalcInfoModal.addEventListener('click', function(e) {
+    if (e.target === tipCalcInfoModal) {
+      tipCalcInfoModal.classList.remove('show');
+    }
   });
 
   loadPreset();
@@ -766,7 +810,26 @@ function getHoursCalcHTML() {
     → Send to End of Day
   </button>
 
+  <button class="app-info-btn" id="hoursCalcInfoBtn" title="Field Explanations"></button>
+
   <div class="hours-bounce" id="emojiDisplay"></div>
+</div>
+
+<div class="app-info-modal" id="hoursCalcInfoModal">
+  <div class="app-info-content">
+    <div class="app-info-header">
+      <span class="app-info-title">Field Explanations</span>
+      <button class="app-info-close" id="closeHoursCalcInfoBtn">✕</button>
+    </div>
+    <ul class="app-info-list">
+      <li><strong>Start Time</strong> - When your shift began</li>
+      <li><strong>End Time</strong> - When your shift ended</li>
+      <li><strong>Break Time</strong> - Minutes of unpaid break (subtracted from total hours)</li>
+      <li><strong>Exact Time Elapsed</strong> - Total time from start to end</li>
+      <li><strong>Time After Break</strong> - Working time minus break</li>
+      <li><strong>Rounded Time ⭐</strong> - Hours rounded to nearest quarter hour (0.25h increments). This gets sent to the End of Day Calculator.</li>
+    </ul>
+  </div>
 </div>`;
 }
 
@@ -839,6 +902,25 @@ function initHoursCalc() {
   startInput.addEventListener('change', updateHours);
   endInput.addEventListener('change', updateHours);
   breakInput.addEventListener('input', updateHours);
+
+  // Info modal
+  const hoursCalcInfoBtn = document.getElementById('hoursCalcInfoBtn');
+  const hoursCalcInfoModal = document.getElementById('hoursCalcInfoModal');
+  const closeHoursCalcInfoBtn = document.getElementById('closeHoursCalcInfoBtn');
+  
+  hoursCalcInfoBtn.addEventListener('click', function() {
+    hoursCalcInfoModal.classList.add('show');
+  });
+  
+  closeHoursCalcInfoBtn.addEventListener('click', function() {
+    hoursCalcInfoModal.classList.remove('show');
+  });
+  
+  hoursCalcInfoModal.addEventListener('click', function(e) {
+    if (e.target === hoursCalcInfoModal) {
+      hoursCalcInfoModal.classList.remove('show');
+    }
+  });
 
   const saveHoursBtn = document.getElementById('saveHoursToEndOfDay');
   saveHoursBtn.addEventListener('click', function() {
@@ -990,7 +1072,6 @@ function getEndOfDayHTML() {
     cursor: pointer;
     font-size: 0.8rem;
     font-weight: 600;
-    margin-top: 0.5rem;
     transition: all 0.2s;
   }
   
@@ -1384,7 +1465,27 @@ function getEndOfDayHTML() {
     ↶ Undo Last Delete
   </button>
   
+  <button class="app-info-btn" id="eodInfoBtn" title="Field Explanations"></button>
+  
   <div class="eod-pig" id="pigDisplay"></div>
+</div>
+
+<div class="app-info-modal" id="eodInfoModal">
+  <div class="app-info-content">
+    <div class="app-info-header">
+      <span class="app-info-title">Field Explanations</span>
+      <button class="app-info-close" id="closeEodInfoBtn">✕</button>
+    </div>
+    <ul class="app-info-list">
+      <li><strong>Add Hours Worked</strong> - Enter rounded hours</li>
+      <li><strong>Add Tips Earned</strong> - Enter final tips for the tip pool</li>
+      <li><strong>Total Hours</strong> - Sum of all hours entries across shifts</li>
+      <li><strong>Total Tips</strong> - Sum of all tips entries</li>
+      <li><strong>Hourly Rate</strong> - Average earnings per hour (Total Tips ÷ Total Hours)</li>
+      <li><strong>View Tips Breakdown</strong> - Shows calculated total tips based on the hourly rate</li>
+      <li><strong>Hours/Tips Entries</strong> - Individual shift records (can edit or delete)</li>
+    </ul>
+  </div>
 </div>`;
 }
 
@@ -1666,6 +1767,25 @@ function initEndOfDay() {
   breakdownModal.addEventListener('click', function(e) {
     if (e.target === breakdownModal) {
       breakdownModal.classList.remove('show');
+    }
+  });
+  
+  // Info modal
+  const eodInfoBtn = document.getElementById('eodInfoBtn');
+  const eodInfoModal = document.getElementById('eodInfoModal');
+  const closeEodInfoBtn = document.getElementById('closeEodInfoBtn');
+  
+  eodInfoBtn.addEventListener('click', function() {
+    eodInfoModal.classList.add('show');
+  });
+  
+  closeEodInfoBtn.addEventListener('click', function() {
+    eodInfoModal.classList.remove('show');
+  });
+  
+  eodInfoModal.addEventListener('click', function(e) {
+    if (e.target === eodInfoModal) {
+      eodInfoModal.classList.remove('show');
     }
   });
   
