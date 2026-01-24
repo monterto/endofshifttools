@@ -98,7 +98,6 @@ function getTipCalcHTML() {
     gap: 0.75rem;
   }
   
-  /* Primary Inputs Section */
   .tip-primary-inputs {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -137,7 +136,23 @@ function getTipCalcHTML() {
     border-color: var(--warning);
   }
   
-  /* Secondary Inputs - Percentages & Advanced */
+  .tip-advanced {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+  
+  .tip-advanced .tip-field label {
+    font-size: 0.75rem;
+    opacity: 0.7;
+  }
+  
+  .tip-advanced .tip-field input {
+    padding: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+  
   .tip-secondary {
     display: grid;
     grid-template-columns: 1fr 1fr 40px;
@@ -208,24 +223,6 @@ function getTipCalcHTML() {
     50% { transform: scale(1.1); }
   }
   
-  /* Advanced inputs (Large Party, Cash) */
-  .tip-advanced {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-  }
-  
-  .tip-advanced .tip-field label {
-    font-size: 0.75rem;
-    opacity: 0.7;
-  }
-  
-  .tip-advanced .tip-field input {
-    padding: 0.5rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-  }
-  
   .tip-warning {
     background-color: rgba(255, 107, 107, 0.1);
     border: 1px solid var(--warning);
@@ -242,7 +239,6 @@ function getTipCalcHTML() {
     display: block;
   }
   
-  /* Outputs - Prominent Display */
   .tip-outputs {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
@@ -326,7 +322,6 @@ function getTipCalcHTML() {
     50% { transform: translateY(-6px); }
   }
   
-  /* Mobile optimizations */
   @media (max-width: 400px) {
     .tip-app {
       padding: 0.75rem;
@@ -354,7 +349,6 @@ function getTipCalcHTML() {
 </style>
 
 <div class="tip-app">
-  <!-- Primary Inputs: Owed & Sales -->
   <div class="tip-primary-inputs">
     <div class="tip-field">
       <label>Owed</label>
@@ -366,7 +360,6 @@ function getTipCalcHTML() {
     </div>
   </div>
 
-  <!-- Advanced: Large Party & Cash -->
   <div class="tip-advanced">
     <div class="tip-field">
       <label>Large Party (1%)</label>
@@ -378,7 +371,6 @@ function getTipCalcHTML() {
     </div>
   </div>
 
-  <!-- Secondary: Percentages & Settings - De-emphasized -->
   <div class="tip-secondary">
     <div class="tip-field">
       <label>BoH %</label>
@@ -391,12 +383,10 @@ function getTipCalcHTML() {
     <button class="tip-icon-btn" id="savePreset" title="Save Preset">💾</button>
   </div>
 
-  <!-- Warning -->
   <div class="tip-warning" id="warningBox">
     ⚠️ Final tips are negative!
   </div>
 
-  <!-- Outputs - Prominent Card -->
   <div class="tip-outputs">
     <div class="tip-output">
       <span>BoH</span>
@@ -412,7 +402,6 @@ function getTipCalcHTML() {
     </div>
   </div>
 
-  <!-- Action Buttons -->
   <button class="tip-save-btn" id="saveToEndOfDay">
     → Send to End of Day
   </button>
@@ -445,7 +434,7 @@ function initTipCalc() {
   const clearBtn = document.getElementById("clearBtn");
 
   const round2 = n => Math.round(n * 100) / 100;
-  const usd = n => `$${round2(n).toFixed(2)}`;
+  const usd = n => "$" + round2(n).toFixed(2);
 
   let currentTipValue = 0;
 
@@ -603,7 +592,6 @@ function getHoursCalcHTML() {
     gap: 1rem;
   }
   
-  /* Primary inputs - emphasized */
   .hours-field {
     display: flex;
     flex-direction: column;
@@ -631,7 +619,6 @@ function getHoursCalcHTML() {
     border-color: var(--accent);
   }
   
-  /* Primary time inputs - emphasized */
   .hours-field.primary input {
     border: 2px solid var(--border);
     padding: 0.75rem;
@@ -643,7 +630,6 @@ function getHoursCalcHTML() {
     border-color: var(--accent);
   }
   
-  /* De-emphasized break input */
   .hours-field.secondary {
     opacity: 0.7;
   }
@@ -657,7 +643,6 @@ function getHoursCalcHTML() {
     font-size: 0.9rem;
   }
   
-  /* De-emphasized outputs */
   .hours-output {
     background-color: #0c0e13;
     border: 1px solid var(--border);
@@ -685,7 +670,6 @@ function getHoursCalcHTML() {
     font-size: 0.9rem;
   }
   
-  /* Emphasized rounded time output */
   .hours-field.emphasized {
     margin-top: 0.5rem;
   }
@@ -1362,7 +1346,6 @@ function getEndOfDayHTML() {
     </button>
   </div>
   
-  <!-- Breakdown Modal -->
   <div class="eod-breakdown-modal" id="breakdownModal">
     <div class="eod-breakdown-content">
       <div class="eod-breakdown-header">
@@ -1370,7 +1353,6 @@ function getEndOfDayHTML() {
         <button class="eod-breakdown-close" id="closeBreakdownBtn">✕</button>
       </div>
       <div class="eod-breakdown-list" id="breakdownList">
-        <!-- Breakdown items will be inserted here -->
       </div>
     </div>
   </div>
@@ -1416,7 +1398,6 @@ function initEndOfDay() {
   var totalTips = 0;
   var hoursEntries = [];
   var tipsEntries = [];
-  
   var lastDeletedItem = null;
 
   function loadData() {
@@ -1463,7 +1444,6 @@ function initEndOfDay() {
       undoBtn.style.display = 'none';
     }
     
-    // Enable/disable breakdown button
     const breakdownBtn = document.getElementById('showBreakdownBtn');
     if (hoursEntries.length === 0 || totalHours === 0) {
       breakdownBtn.disabled = true;
@@ -1670,7 +1650,6 @@ function initEndOfDay() {
     }
   });
 
-  // Breakdown modal functionality
   const showBreakdownBtn = document.getElementById('showBreakdownBtn');
   const breakdownModal = document.getElementById('breakdownModal');
   const closeBreakdownBtn = document.getElementById('closeBreakdownBtn');
@@ -1690,14 +1669,12 @@ function initEndOfDay() {
   });
   
   function showBreakdown() {
-    const hourlyRate = totalHours > 0 ? totalTips / totalHours : 0;
-    const breakdownList = document.getElementById('breakdownList');
-    
-    if (hoursEntries.length === 0) {
-      breakdownList.innerHTML = '<div class="eod-empty">No hours entries to show breakdown</div>';
-      breakdownModal.classList.add('show');
+    if (hoursEntries.length === 0 || totalHours === 0) {
       return;
     }
+    
+    const hourlyRate = totalHours > 0 ? totalTips / totalHours : 0;
+    const breakdownList = document.getElementById('breakdownList');
     
     var html = '';
     var calculatedTotal = 0;
@@ -1710,141 +1687,15 @@ function initEndOfDay() {
       html += '<div class="eod-breakdown-item">';
       html += '<div class="eod-breakdown-item-left">';
       html += '<span class="eod-breakdown-item-label">Entry ' + (i + 1) + '</span>';
-      html += '<span class="eod-breakdown-item-calc">' + hours.toFixed(2) + 'h × 
-}
-
-// ============================================
-// SERVICE WORKER & PWA
-// ============================================
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(function(registration) {
-        console.log('Service Worker registered:', registration.scope);
-        
-        registration.addEventListener('updatefound', function() {
-          const newWorker = registration.installing;
-          newWorker.addEventListener('statechange', function() {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('New version available! Refresh to update.');
-            }
-          });
-        });
-      })
-      .catch(function(err) {
-        console.error('Service Worker registration failed:', err);
-      });
-  });
-}
-
-window.addEventListener('load', function() {
-  var displayMode = 'browser';
-  if (window.matchMedia('(display-mode: standalone)').matches) {
-    displayMode = 'standalone';
-  } else if (window.navigator.standalone === true) {
-    displayMode = 'standalone-ios';
-  }
-  console.log('Display mode:', displayMode);
-});
-
-document.body.addEventListener('touchmove', function(e) {
-  if (e.target === document.body) {
-    e.preventDefault();
-  }
-}, { passive: false }); + hourlyRate.toFixed(2) + '/h</span>';
+      html += '<span class="eod-breakdown-item-calc">' + hours.toFixed(2) + 'h × $' + hourlyRate.toFixed(2) + '/h</span>';
       html += '</div>';
-      html += '<span class="eod-breakdown-item-value">
-}
-
-// ============================================
-// SERVICE WORKER & PWA
-// ============================================
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(function(registration) {
-        console.log('Service Worker registered:', registration.scope);
-        
-        registration.addEventListener('updatefound', function() {
-          const newWorker = registration.installing;
-          newWorker.addEventListener('statechange', function() {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('New version available! Refresh to update.');
-            }
-          });
-        });
-      })
-      .catch(function(err) {
-        console.error('Service Worker registration failed:', err);
-      });
-  });
-}
-
-window.addEventListener('load', function() {
-  var displayMode = 'browser';
-  if (window.matchMedia('(display-mode: standalone)').matches) {
-    displayMode = 'standalone';
-  } else if (window.navigator.standalone === true) {
-    displayMode = 'standalone-ios';
-  }
-  console.log('Display mode:', displayMode);
-});
-
-document.body.addEventListener('touchmove', function(e) {
-  if (e.target === document.body) {
-    e.preventDefault();
-  }
-}, { passive: false }); + tipsForEntry.toFixed(2) + '</span>';
+      html += '<span class="eod-breakdown-item-value">$' + tipsForEntry.toFixed(2) + '</span>';
       html += '</div>';
     }
     
     html += '<div class="eod-breakdown-total">';
     html += '<span class="eod-breakdown-total-label">Total Calculated</span>';
-    html += '<span class="eod-breakdown-total-value">
-}
-
-// ============================================
-// SERVICE WORKER & PWA
-// ============================================
-
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./service-worker.js')
-      .then(function(registration) {
-        console.log('Service Worker registered:', registration.scope);
-        
-        registration.addEventListener('updatefound', function() {
-          const newWorker = registration.installing;
-          newWorker.addEventListener('statechange', function() {
-            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-              console.log('New version available! Refresh to update.');
-            }
-          });
-        });
-      })
-      .catch(function(err) {
-        console.error('Service Worker registration failed:', err);
-      });
-  });
-}
-
-window.addEventListener('load', function() {
-  var displayMode = 'browser';
-  if (window.matchMedia('(display-mode: standalone)').matches) {
-    displayMode = 'standalone';
-  } else if (window.navigator.standalone === true) {
-    displayMode = 'standalone-ios';
-  }
-  console.log('Display mode:', displayMode);
-});
-
-document.body.addEventListener('touchmove', function(e) {
-  if (e.target === document.body) {
-    e.preventDefault();
-  }
-}, { passive: false }); + calculatedTotal.toFixed(2) + '</span>';
+    html += '<span class="eod-breakdown-total-value">$' + calculatedTotal.toFixed(2) + '</span>';
     html += '</div>';
     
     breakdownList.innerHTML = html;
