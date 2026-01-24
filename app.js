@@ -5,8 +5,66 @@
 // Randomize hub emoji on load
 document.getElementById('hubEmoji').textContent = "🐖";
 
+// Check for old End of Day data on hub load
+function checkForOldData() {
+  const saved = localStorage.getItem('endOfDayData');
+  if (!saved) return;
+  
+  const data = JSON.parse(saved);
+  if (!data.sessionStartTime) return;
+  
+  const now = Date.now();
+  const age = now - data.sessionStartTime;
+  const twoHoursInMs = 2 * 60 * 60 * 1000;
+  
+  if (age > twoHoursInMs) {
+    showClearDataModal(age);
+  }
+}
+
+function showClearDataModal(age) {
+  const hoursAgo = Math.floor(age / (60 * 60 * 1000));
+  const modal = document.getElementById('clearDataModal');
+  const ageText = document.getElementById('dataAgeText');
+  
+  if (hoursAgo < 1) {
+    ageText.textContent = 'Data from earlier today is still saved.';
+  } else if (hoursAgo === 1) {
+    ageText.textContent = 'Data from 1 hour ago is still saved.';
+  } else if (hoursAgo < 24) {
+    ageText.textContent = 'Data from ' + hoursAgo + ' hours ago is still saved.';
+  } else {
+    const daysAgo = Math.floor(hoursAgo / 24);
+    ageText.textContent = 'Data from ' + daysAgo + ' day' + (daysAgo > 1 ? 's' : '') + ' ago is still saved.';
+  }
+  
+  modal.classList.add('show');
+}
+
+function clearOldData() {
+  localStorage.removeItem('endOfDayData');
+  document.getElementById('clearDataModal').classList.remove('show');
+}
+
+function keepOldData() {
+  document.getElementById('clearDataModal').classList.remove('show');
+}
+
 // Event listeners - wait for DOM to load
 document.addEventListener('DOMContentLoaded', function() {
+  // Check for old data first
+  checkForOldData();
+  
+  // Manual trigger - click hub emoji to test
+  document.getElementById('hubEmoji').addEventListener('click', function() {
+    const saved = localStorage.getItem('endOfDayData');
+    if (saved) {
+      const data = JSON.parse(saved);
+      const age = data.sessionStartTime ? Date.now() - data.sessionStartTime : 0;
+      showClearDataModal(age);
+    }
+  });
+  
   // App cards
   document.getElementById('tipCalcCard').addEventListener('click', function() {
     loadApp('tipcalc');
@@ -30,9 +88,15 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
   
+  // Clear data modal buttons
+  document.getElementById('keepDataBtn').addEventListener('click', keepOldData);
+  document.getElementById('clearDataBtn').addEventListener('click', clearOldData);
+  
   // Check if we should restore last app
   const lastApp = localStorage.getItem('lastActiveApp');
   if (lastApp && (lastApp === 'tipcalc' || lastApp === 'hourscalc' || lastApp === 'endofday')) {
+    // Push initial state for back button
+    history.pushState({ app: 'hub' }, '', '');
     loadApp(lastApp);
   }
 });
@@ -51,6 +115,9 @@ function loadApp(appName) {
   
   // Save which app is active
   localStorage.setItem('lastActiveApp', appName);
+  
+  // Push a history state so back button works
+  history.pushState({ app: appName }, '', '');
   
   const container = document.getElementById('appContainer');
   
@@ -76,7 +143,23 @@ function backToHub() {
   
   // Clear last active app when returning to hub
   localStorage.removeItem('lastActiveApp');
+  
+  // Go back in history if we pushed a state
+  if (history.state && history.state.app) {
+    history.back();
+  }
 }
+
+// Handle browser back button
+window.addEventListener('popstate', function(e) {
+  // If we're in an app view, go back to hub
+  if (document.getElementById('appView').classList.contains('active')) {
+    document.getElementById('appView').classList.remove('active');
+    document.getElementById('hubView').style.display = 'flex';
+    document.getElementById('appContainer').innerHTML = '';
+    localStorage.removeItem('lastActiveApp');
+  }
+});
 
 // ============================================
 // TIP CALCULATOR
@@ -554,6 +637,7 @@ function initTipCalc() {
     if (currentTipValue > 0) {
       const saved = localStorage.getItem('endOfDayData');
       let data = {
+        sessionStartTime: Date.now(),
         totalHours: 0,
         totalTips: 0,
         hoursEntries: [],
@@ -562,6 +646,9 @@ function initTipCalc() {
       
       if (saved) {
         data = JSON.parse(saved);
+        if (!data.sessionStartTime) {
+          data.sessionStartTime = Date.now();
+        }
       }
       
       const roundedTip = Math.round(currentTipValue * 100) / 100;
@@ -924,6 +1011,7 @@ function initHoursCalc() {
     if (currentRoundedHours > 0) {
       const saved = localStorage.getItem('endOfDayData');
       let data = {
+        sessionStartTime: Date.now(),
         totalHours: 0,
         totalTips: 0,
         hoursEntries: [],
@@ -932,6 +1020,9 @@ function initHoursCalc() {
       
       if (saved) {
         data = JSON.parse(saved);
+        if (!data.sessionStartTime) {
+          data.sessionStartTime = Date.now();
+        }
       }
       
       data.hoursEntries.push(currentRoundedHours);
@@ -1511,6 +1602,14 @@ function initEndOfDay() {
 
   function saveData() {
     const data = {
+      sessionStartTime: totalHours === 0 && totalTips === 0 ? null : (function() {
+        const saved = localStorage.getItem('endOfDayData');
+        if (saved) {
+          const existing = JSON.parse(saved);
+          return existing.sessionStartTime || Date.now();
+        }
+        return Date.now();
+      })(),
       totalHours: totalHours,
       totalTips: totalTips,
       hoursEntries: hoursEntries,
