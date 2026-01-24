@@ -24,30 +24,30 @@ function checkForOldData() {
 
 function showClearDataModal(age) {
   const hoursAgo = Math.floor(age / (60 * 60 * 1000));
-  const modal = document.getElementById('clearDataModal');
+  const alert = document.getElementById('clearDataAlert');
   const ageText = document.getElementById('dataAgeText');
   
   if (hoursAgo < 1) {
-    ageText.textContent = 'Data from earlier today is still saved.';
+    ageText.textContent = 'Data from earlier today is still saved';
   } else if (hoursAgo === 1) {
-    ageText.textContent = 'Data from 1 hour ago is still saved.';
+    ageText.textContent = 'Data from 1 hour ago is still saved';
   } else if (hoursAgo < 24) {
-    ageText.textContent = 'Data from ' + hoursAgo + ' hours ago is still saved.';
+    ageText.textContent = 'Data from ' + hoursAgo + ' hours ago is still saved';
   } else {
     const daysAgo = Math.floor(hoursAgo / 24);
-    ageText.textContent = 'Data from ' + daysAgo + ' day' + (daysAgo > 1 ? 's' : '') + ' ago is still saved.';
+    ageText.textContent = 'Data from ' + daysAgo + ' day' + (daysAgo > 1 ? 's' : '') + ' ago is still saved';
   }
   
-  modal.classList.add('show');
+  alert.classList.add('show');
 }
 
 function clearOldData() {
   localStorage.removeItem('endOfDayData');
-  document.getElementById('clearDataModal').classList.remove('show');
+  document.getElementById('clearDataAlert').classList.remove('show');
 }
 
 function keepOldData() {
-  document.getElementById('clearDataModal').classList.remove('show');
+  document.getElementById('clearDataAlert').classList.remove('show');
 }
 
 // Event listeners - wait for DOM to load
