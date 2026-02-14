@@ -174,270 +174,6 @@ window.addEventListener('popstate', function(e) {
 
 function getTipCalcHTML() {
   return `
-<style>
-  .tip-app {
-    width: 100%;
-    max-width: 420px;
-    margin: 1rem auto;
-    background-color: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  
-  .tip-primary-inputs {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-  }
-  
-  .tip-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-  }
-  
-  .tip-field label {
-    font-size: 0.8rem;
-    color: var(--muted);
-    font-weight: 500;
-  }
-  
-  .tip-field input {
-    width: 100%;
-    background-color: #0c0e13;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.65rem;
-    font-size: 1.1rem;
-    color: var(--text);
-    font-weight: 600;
-  }
-  
-  .tip-field input:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
-  
-  .tip-field input.error {
-    border-color: var(--warning);
-  }
-  
-  .tip-advanced {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 0.5rem;
-  }
-  
-  .tip-advanced .tip-field label {
-    font-size: 0.75rem;
-    opacity: 0.7;
-  }
-  
-  .tip-advanced .tip-field input {
-    padding: 0.5rem;
-    font-size: 0.95rem;
-    font-weight: 500;
-  }
-  
-  .tip-secondary {
-    display: grid;
-    grid-template-columns: 1fr 1fr 40px;
-    gap: 0.5rem;
-    align-items: end;
-    opacity: 0.6;
-    margin-top: 0.5rem;
-    transition: opacity 0.2s;
-  }
-  
-  .tip-secondary:hover {
-    opacity: 0.9;
-  }
-  
-  .tip-secondary .tip-field {
-    gap: 0.15rem;
-  }
-  
-  .tip-secondary .tip-field label {
-    font-size: 0.65rem;
-    opacity: 0.7;
-  }
-  
-  .tip-secondary .tip-field input {
-    padding: 0.45rem;
-    font-size: 0.85rem;
-    background-color: rgba(12, 14, 19, 0.5);
-  }
-  
-  .tip-secondary .tip-field input:focus {
-    background-color: #0c0e13;
-  }
-  
-  .tip-icon-btn {
-    width: 40px;
-    height: 40px;
-    background-color: rgba(12, 14, 19, 0.5);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--muted);
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 1rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    opacity: 0.7;
-  }
-  
-  .tip-icon-btn:hover {
-    border-color: var(--accent);
-    color: var(--accent);
-    background-color: rgba(77, 163, 255, 0.1);
-    opacity: 1;
-  }
-  
-  .tip-icon-btn.saved {
-    border-color: #51cf66;
-    color: #51cf66;
-    background-color: rgba(81, 207, 102, 0.2);
-    animation: pulse 0.6s ease-in-out;
-    opacity: 1;
-  }
-  
-  @keyframes pulse {
-    0%, 100% { transform: scale(1); }
-    50% { transform: scale(1.1); }
-  }
-  
-  .tip-warning {
-    background-color: rgba(255, 107, 107, 0.1);
-    border: 1px solid var(--warning);
-    border-radius: 6px;
-    padding: 0.6rem;
-    color: var(--warning);
-    font-size: 0.8rem;
-    display: none;
-    text-align: center;
-    font-weight: 500;
-  }
-  
-  .tip-warning.show {
-    display: block;
-  }
-  
-  .tip-outputs {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-    padding: 0.75rem;
-    background-color: #0c0e13;
-    border: 2px solid var(--border);
-    border-radius: 8px;
-  }
-  
-  .tip-output {
-    text-align: center;
-    padding: 0.5rem;
-    border-radius: 6px;
-    transition: all 0.2s;
-  }
-  
-  .tip-output span {
-    display: block;
-    font-size: 0.7rem;
-    color: var(--muted);
-    font-weight: 500;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    margin-bottom: 0.3rem;
-  }
-  
-  .tip-output strong {
-    display: block;
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--text);
-  }
-  
-  .tip-output.highlight {
-    background-color: rgba(77, 163, 255, 0.1);
-    border: 2px solid var(--accent);
-    padding: 0.4rem;
-  }
-  
-  .tip-output.highlight span {
-    color: var(--accent);
-  }
-  
-  .tip-output.highlight strong {
-    font-size: 1.5rem;
-    color: var(--accent);
-  }
-  
-  .tip-output.negative strong {
-    color: var(--warning);
-  }
-  
-  .tip-save-btn {
-    background-color: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 6px;
-    padding: 0.7rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 0.25rem;
-  }
-  
-  .tip-save-btn:hover {
-    background-color: #3d8fe6;
-  }
-  
-  .tip-pig {
-    margin-top: 0.5rem;
-    text-align: center;
-    font-size: 1.4rem;
-    animation: bounce 2s ease-in-out infinite;
-  }
-  
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-  }
-  
-  @media (max-width: 400px) {
-    .tip-app {
-      padding: 0.75rem;
-      gap: 0.6rem;
-      margin: 0.5rem auto;
-    }
-    
-    .tip-field input {
-      padding: 0.55rem;
-      font-size: 1rem;
-    }
-    
-    .tip-outputs {
-      padding: 0.5rem;
-    }
-    
-    .tip-output strong {
-      font-size: 1.1rem;
-    }
-    
-    .tip-output.highlight strong {
-      font-size: 1.3rem;
-    }
-  }
-</style>
-
 <div class="tip-app">
   <div class="tip-primary-inputs">
     <div class="tip-field">
@@ -451,9 +187,12 @@ function getTipCalcHTML() {
   </div>
 
   <div class="tip-advanced">
-    <div class="tip-field">
-      <label>Large Party (1%)</label>
-      <input id="largeParty" type="number" step="0.01" placeholder="0.00" inputmode="decimal" />
+    <div class="tip-party-display">
+      <div class="tip-party-display-field">
+        <label>Large Party</label>
+        <div class="tip-party-display-value" id="partyDisplayValue">$0.00</div>
+      </div>
+      <button class="tip-party-edit-btn" id="openPartyModalBtn" title="Configure Large Parties">📝</button>
     </div>
     <div class="tip-field">
       <label>Cash</label>
@@ -462,15 +201,19 @@ function getTipCalcHTML() {
   </div>
 
   <div class="tip-secondary">
-    <div class="tip-field">
-      <label>BoH %</label>
-      <input id="bohPercent" type="number" step="0.01" inputmode="decimal" />
+    <div class="tip-percent-display">
+      <div class="tip-percent-display-field">
+        <label>BoH %</label>
+        <div class="tip-percent-display-value" id="bohPercentDisplay">5%</div>
+      </div>
     </div>
-    <div class="tip-field">
-      <label>FoH %</label>
-      <input id="fohPercent" type="number" step="0.01" inputmode="decimal" />
+    <div class="tip-percent-display">
+      <div class="tip-percent-display-field">
+        <label>FoH %</label>
+        <div class="tip-percent-display-value" id="fohPercentDisplay">3%</div>
+      </div>
     </div>
-    <button class="tip-icon-btn" id="savePreset" title="Save Preset">💾</button>
+    <button class="tip-icon-btn" id="openPercentModalBtn" title="Edit Percentages">📝</button>
   </div>
 
   <div class="tip-warning" id="warningBox">
@@ -503,6 +246,42 @@ function getTipCalcHTML() {
   <div class="tip-pig" id="pigDisplay"></div>
 </div>
 
+<div class="tip-party-modal" id="partyModal">
+  <div class="tip-party-modal-content">
+    <div class="tip-party-modal-header">
+      <span class="tip-party-modal-title">Add/edit large party</span>
+      <button class="tip-party-modal-close" id="closePartyModalBtn">Done</button>
+    </div>
+    <div class="tip-party-section">
+      <div id="partyContainer"></div>
+      <button class="tip-add-party" id="addPartyBtn">+ Add Party</button>
+    </div>
+  </div>
+</div>
+
+<div class="tip-party-modal" id="percentModal">
+  <div class="tip-party-modal-content">
+    <div class="tip-party-modal-header">
+      <span class="tip-party-modal-title">Edit Tip %</span>
+      <button class="tip-party-modal-close" id="closePercentModalBtn">Cancel</button>
+    </div>
+    <div class="tip-percent-edit-section">
+      <div class="tip-percent-edit-field">
+        <label>Back of House %</label>
+        <input type="number" id="bohPercentEdit" step="0.01" placeholder="5" inputmode="decimal" />
+      </div>
+      <div class="tip-percent-edit-field">
+        <label>Front of House Support %</label>
+        <input type="number" id="fohPercentEdit" step="0.01" placeholder="3" inputmode="decimal" />
+      </div>
+      <div class="tip-percent-actions">
+        <button class="tip-percent-reset" id="resetPercentsBtn">Reset to Defaults</button>
+        <button class="tip-percent-save" id="savePercentsBtn">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="app-info-modal" id="tipCalcInfoModal">
   <div class="app-info-content">
     <div class="app-info-header">
@@ -512,17 +291,18 @@ function getTipCalcHTML() {
     <ul class="app-info-list">
       <li><strong>Owed</strong> - Total tips owed to you from the POS system</li>
       <li><strong>Total Net Sales</strong> - Your total net sales for the shift</li>
-      <li><strong>Large Party (1%)</strong> - Sales from large party (1% is subtracted from tips)</li>
+      <li><strong>Large Party</strong> - Click 📝 to configure parties. Enter headcount and cost per head; 1% of (headcount × cost per head) is subtracted from tips</li>
       <li><strong>Cash</strong> - Cash tips received (added to your final tips)</li>
-      <li><strong>BoH %</strong> - Percentage of sales going to Back of House staff</li>
-      <li><strong>FoH %</strong> - Percentage of sales going to Support staff</li>
-      <li><strong>Save Button (💾)</strong> - Saves BoH% and FoH%</li>
+      <li><strong>BoH %</strong> - Percentage of sales going to Back of House staff (click 📝 to edit)</li>
+      <li><strong>FoH %</strong> - Percentage of sales going to Support staff (click 📝 to edit)</li>
+      <li><strong>Edit Button (📝)</strong> - Opens editor to safely change BoH% and FoH%. Changes require explicit confirmation.</li>
+      <li><strong>Reset to Defaults</strong> - In the percentage editor, resets BoH to 5% and FoH to 3% (requires confirmation)</li>
       <li><strong>BoH (output)</strong> - Calculated amount going to Back of House</li>
       <li><strong>FoH (output)</strong> - Calculated amount going to Support</li>
       <li><strong>Tips (output)</strong> - Final tips to the tip pool</li>
     </ul>
     <div class="app-info-formula">
-      <strong>Formula:</strong> Tips = Owed - BoH - FoH - (Large Party × 1%) + Cash
+      <strong>Formula:</strong> Tips = Owed - BoH - FoH - (Large Party) + Cash
     </div>
   </div>
 </div>`;
@@ -531,12 +311,10 @@ function getTipCalcHTML() {
 function initTipCalc() {
   const DEFAULT_BOH = 5;
   const DEFAULT_FOH = 3;
+  const DEFAULT_COST_PER_HEAD = 65;
 
   const owed = document.getElementById("owed");
   const sales = document.getElementById("sales");
-  const bohPercent = document.getElementById("bohPercent");
-  const fohPercent = document.getElementById("fohPercent");
-  const largeParty = document.getElementById("largeParty");
   const cash = document.getElementById("cash");
   const bohEl = document.getElementById("boh");
   const fohEl = document.getElementById("foh");
@@ -544,13 +322,190 @@ function initTipCalc() {
   const tipsOutput = document.getElementById("tipsOutput");
   const warningBox = document.getElementById("warningBox");
   const pigDisplay = document.getElementById("pigDisplay");
-  const savePresetBtn = document.getElementById("savePreset");
   const clearBtn = document.getElementById("clearBtn");
+  const partyContainer = document.getElementById("partyContainer");
+  const addPartyBtn = document.getElementById("addPartyBtn");
+  const partyDisplayValue = document.getElementById("partyDisplayValue");
+  const openPartyModalBtn = document.getElementById("openPartyModalBtn");
+  const partyModal = document.getElementById("partyModal");
+  const closePartyModalBtn = document.getElementById("closePartyModalBtn");
+  
+  // Percent modal elements
+  const bohPercentDisplay = document.getElementById("bohPercentDisplay");
+  const fohPercentDisplay = document.getElementById("fohPercentDisplay");
+  const openPercentModalBtn = document.getElementById("openPercentModalBtn");
+  const percentModal = document.getElementById("percentModal");
+  const closePercentModalBtn = document.getElementById("closePercentModalBtn");
+  const bohPercentEdit = document.getElementById("bohPercentEdit");
+  const fohPercentEdit = document.getElementById("fohPercentEdit");
+  const savePercentsBtn = document.getElementById("savePercentsBtn");
+  const resetPercentsBtn = document.getElementById("resetPercentsBtn");
 
   const round2 = n => Math.round(n * 100) / 100;
   const usd = n => "$" + round2(n).toFixed(2);
 
   let currentTipValue = 0;
+  let largeParties = [];
+  let bohPercent = DEFAULT_BOH;
+  let fohPercent = DEFAULT_FOH;
+
+  function renderParties() {
+    let html = '';
+    largeParties.forEach(function(party, index) {
+      const calculation = party.headcount && party.costPerHead 
+        ? (party.headcount * party.costPerHead * 0.01).toFixed(2) 
+        : '0.00';
+      
+      html += '<div class="tip-party-row">';
+      html += '  <div class="tip-party-input">';
+      html += '    <label>Headcount</label>';
+      html += '    <input type="number" class="party-headcount" data-index="' + index + '" value="' + (party.headcount || '') + '" placeholder="0" inputmode="numeric" />';
+      html += '  </div>';
+      html += '  <div class="tip-party-input">';
+      html += '    <label>$/Head</label>';
+      html += '    <input type="number" step="0.01" class="party-cost" data-index="' + index + '" value="' + (party.costPerHead || DEFAULT_COST_PER_HEAD) + '" placeholder="65" inputmode="decimal" />';
+      html += '  </div>';
+      html += '  <button class="tip-party-remove" data-index="' + index + '">×</button>';
+      html += '</div>';
+      html += '<div class="tip-party-calc">' + (party.headcount || 0) + ' × $' + (party.costPerHead || DEFAULT_COST_PER_HEAD) + ' × 1% = $' + calculation + '</div>';
+    });
+    
+    partyContainer.innerHTML = html;
+    
+    // Update main screen display
+    let totalDeduction = 0;
+    largeParties.forEach(function(party) {
+      if (party.headcount && party.costPerHead) {
+        totalDeduction += (party.headcount * party.costPerHead * 0.01);
+      }
+    });
+    partyDisplayValue.textContent = '$' + totalDeduction.toFixed(2);
+    
+    // Attach event listeners to new inputs
+    document.querySelectorAll('.party-headcount').forEach(function(input) {
+      input.addEventListener('input', function() {
+        const idx = parseInt(this.getAttribute('data-index'));
+        largeParties[idx].headcount = parseFloat(this.value) || 0;
+        calculate();
+        renderParties();
+      });
+    });
+    
+    document.querySelectorAll('.party-cost').forEach(function(input) {
+      input.addEventListener('input', function() {
+        const idx = parseInt(this.getAttribute('data-index'));
+        largeParties[idx].costPerHead = parseFloat(this.value) || DEFAULT_COST_PER_HEAD;
+        calculate();
+        renderParties();
+      });
+    });
+    
+    document.querySelectorAll('.tip-party-remove').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        const idx = parseInt(this.getAttribute('data-index'));
+        largeParties.splice(idx, 1);
+        calculate();
+        renderParties();
+      });
+    });
+  }
+
+  function addParty() {
+    largeParties.push({ headcount: 0, costPerHead: DEFAULT_COST_PER_HEAD });
+    renderParties();
+    // Focus on the new headcount input
+    setTimeout(function() {
+      const inputs = document.querySelectorAll('.party-headcount');
+      if (inputs.length > 0) {
+        inputs[inputs.length - 1].focus();
+      }
+    }, 50);
+  }
+
+  addPartyBtn.addEventListener('click', addParty);
+
+  // Party modal controls
+  openPartyModalBtn.addEventListener('click', function() {
+    partyModal.classList.add('show');
+  });
+
+  closePartyModalBtn.addEventListener('click', function() {
+    partyModal.classList.remove('show');
+  });
+
+  partyModal.addEventListener('click', function(e) {
+    if (e.target === partyModal) {
+      partyModal.classList.remove('show');
+    }
+  });
+
+  // Percent modal controls
+  openPercentModalBtn.addEventListener('click', function() {
+    // Load current values into edit fields
+    bohPercentEdit.value = bohPercent;
+    fohPercentEdit.value = fohPercent;
+    percentModal.classList.add('show');
+  });
+
+  closePercentModalBtn.addEventListener('click', function() {
+    percentModal.classList.remove('show');
+  });
+
+  percentModal.addEventListener('click', function(e) {
+    if (e.target === percentModal) {
+      percentModal.classList.remove('show');
+    }
+  });
+
+  savePercentsBtn.addEventListener('click', function() {
+    const newBoh = parseFloat(bohPercentEdit.value);
+    const newFoh = parseFloat(fohPercentEdit.value);
+    
+    if (isNaN(newBoh) || isNaN(newFoh) || newBoh < 0 || newFoh < 0) {
+      alert('Please enter valid percentages (0 or greater).');
+      return;
+    }
+    
+    const confirmed = confirm('Save Back of House to ' + newBoh + '% and Support to ' + newFoh + '%?');
+    if (!confirmed) return;
+    
+    bohPercent = newBoh;
+    fohPercent = newFoh;
+    
+    // Update displays
+    bohPercentDisplay.textContent = bohPercent + '%';
+    fohPercentDisplay.textContent = fohPercent + '%';
+    
+    // Save to localStorage
+    localStorage.setItem('tipCalcPreset', JSON.stringify({
+      boh: bohPercent,
+      foh: fohPercent
+    }));
+    
+    calculate();
+    percentModal.classList.remove('show');
+  });
+
+  resetPercentsBtn.addEventListener('click', function() {
+    const confirmed = confirm('Reset Back of House to ' + DEFAULT_BOH + '% and Support to ' + DEFAULT_FOH + '%?');
+    if (!confirmed) return;
+    
+    bohPercent = DEFAULT_BOH;
+    fohPercent = DEFAULT_FOH;
+    
+    bohPercentEdit.value = bohPercent;
+    fohPercentEdit.value = fohPercent;
+    bohPercentDisplay.textContent = bohPercent + '%';
+    fohPercentDisplay.textContent = fohPercent + '%';
+    
+    // Save to localStorage
+    localStorage.setItem('tipCalcPreset', JSON.stringify({
+      boh: bohPercent,
+      foh: fohPercent
+    }));
+    
+    calculate();
+  });
 
   function validateInput(input) {
     const value = parseFloat(input.value);
@@ -566,23 +521,27 @@ function initTipCalc() {
   function calculate() {
     const validInputs = [
       validateInput(owed),
-      validateInput(sales),
-      validateInput(bohPercent),
-      validateInput(fohPercent)
+      validateInput(sales)
     ].every(v => v);
 
     if (!validInputs) return;
 
     const o = parseFloat(owed.value) || 0;
     const s = parseFloat(sales.value) || 0;
-    const bohP = (parseFloat(bohPercent.value) || 0) / 100;
-    const fohP = (parseFloat(fohPercent.value) || 0) / 100;
-    const lp = parseFloat(largeParty.value) || 0;
+    const bohP = bohPercent / 100;
+    const fohP = fohPercent / 100;
     const c = parseFloat(cash.value) || 0;
+
+    // Calculate total large party deduction
+    let largePartyTip = 0;
+    largeParties.forEach(function(party) {
+      if (party.headcount && party.costPerHead) {
+        largePartyTip += (party.headcount * party.costPerHead * 0.01);
+      }
+    });
 
     const boh = s * bohP;
     const foh = s * fohP;
-    const largePartyTip = lp * 0.01;
     const tips = o - (boh + foh) - largePartyTip + c;
 
     currentTipValue = tips;
@@ -604,38 +563,23 @@ function initTipCalc() {
     const saved = localStorage.getItem('tipCalcPreset');
     if (saved) {
       const preset = JSON.parse(saved);
-      bohPercent.value = preset.boh;
-      fohPercent.value = preset.foh;
+      bohPercent = preset.boh;
+      fohPercent = preset.foh;
     } else {
-      bohPercent.value = DEFAULT_BOH;
-      fohPercent.value = DEFAULT_FOH;
+      bohPercent = DEFAULT_BOH;
+      fohPercent = DEFAULT_FOH;
     }
+    bohPercentDisplay.textContent = bohPercent + '%';
+    fohPercentDisplay.textContent = fohPercent + '%';
     calculate();
   }
-
-  savePresetBtn.addEventListener('click', function() {
-    const bohVal = parseFloat(bohPercent.value) || 0;
-    const fohVal = parseFloat(fohPercent.value) || 0;
-    
-    if (bohVal >= 0 && fohVal >= 0) {
-      localStorage.setItem('tipCalcPreset', JSON.stringify({
-        boh: bohVal,
-        foh: fohVal
-      }));
-      savePresetBtn.textContent = '✓';
-      savePresetBtn.classList.add('saved');
-      setTimeout(function() {
-        savePresetBtn.textContent = '💾';
-        savePresetBtn.classList.remove('saved');
-      }, 1500);
-    }
-  });
 
   clearBtn.addEventListener('click', function() {
     owed.value = '';
     sales.value = '';
-    bohPercent.value = '';
-    fohPercent.value = '';
+    cash.value = '';
+    largeParties = [];
+    renderParties();
     loadPreset();
   });
 
@@ -659,7 +603,7 @@ function initTipCalc() {
       }
       
       const roundedTip = Math.round(currentTipValue * 100) / 100;
-      data.tipsEntries.push(roundedTip);
+      data.tipsEntries.push({value: roundedTip, auto: true});
       data.totalTips += roundedTip;
       
       localStorage.setItem('endOfDayData', JSON.stringify(data));
@@ -683,7 +627,7 @@ function initTipCalc() {
   pigDisplay.textContent = pigs[Math.floor(Math.random() * pigs.length)] + 
                           money[Math.floor(Math.random() * money.length)];
 
-  [owed, sales, bohPercent, fohPercent, largeParty, cash].forEach(function(el) {
+  [owed, sales, cash].forEach(function(el) {
     el.addEventListener("input", calculate);
   });
 
@@ -707,6 +651,7 @@ function initTipCalc() {
   });
 
   loadPreset();
+  renderParties(); // Initialize party container
 }
 
 // ============================================
@@ -715,153 +660,6 @@ function initTipCalc() {
 
 function getHoursCalcHTML() {
   return `
-<style>
-  .hours-app {
-    width: 100%;
-    max-width: 420px;
-    margin: 2rem auto;
-    background-color: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1.25rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .hours-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.25rem;
-  }
-  
-  .hours-field label {
-    font-size: 0.9rem;
-    color: var(--muted);
-    font-weight: 500;
-  }
-  
-  .hours-field input {
-    width: 100%;
-    background-color: #0c0e13;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.6rem;
-    font-size: 1rem;
-    color: var(--text);
-  }
-  
-  .hours-field input:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
-  
-  .hours-field.primary input {
-    border: 2px solid var(--border);
-    padding: 0.75rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-  }
-  
-  .hours-field.primary input:focus {
-    border-color: var(--accent);
-  }
-  
-  .hours-field.secondary {
-    opacity: 0.7;
-  }
-  
-  .hours-field.secondary label {
-    font-size: 0.8rem;
-  }
-  
-  .hours-field.secondary input {
-    padding: 0.5rem;
-    font-size: 0.9rem;
-  }
-  
-  .hours-output {
-    background-color: #0c0e13;
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 0.6rem;
-  }
-  
-  .hours-output strong {
-    font-size: 1.05rem;
-  }
-  
-  .hours-field.deemphasized {
-    opacity: 0.5;
-  }
-  
-  .hours-field.deemphasized label {
-    font-size: 0.75rem;
-  }
-  
-  .hours-field.deemphasized .hours-output {
-    padding: 0.4rem;
-  }
-  
-  .hours-field.deemphasized .hours-output strong {
-    font-size: 0.9rem;
-  }
-  
-  .hours-field.emphasized {
-    margin-top: 0.5rem;
-  }
-  
-  .hours-field.emphasized label {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--accent);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .hours-field.emphasized .hours-output {
-    background-color: #0c0e13;
-    border: 2px solid var(--accent);
-    padding: 1rem;
-    text-align: center;
-  }
-  
-  .hours-field.emphasized .hours-output strong {
-    font-size: 2rem;
-    font-weight: 700;
-    color: var(--accent);
-  }
-  
-  .hours-bounce {
-    margin-top: 15px;
-    font-size: 2em;
-    animation: bounce 1.5s ease-in-out infinite;
-    text-align: center;
-  }
-  
-  .hours-save-btn {
-    background-color: var(--accent);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 0.75rem;
-    font-size: 0.9rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.2s;
-    margin-top: 0.5rem;
-  }
-  
-  .hours-save-btn:hover {
-    background-color: #3d8fe6;
-  }
-  
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-  }
-</style>
-
 <div class="hours-app">
   <div class="hours-field primary">
     <label>Start Time</label>
@@ -923,7 +721,6 @@ function getHoursCalcHTML() {
   </div>
 </div>`;
 }
-
 function initHoursCalc() {
   const pigEmojis = ["🐽", "🐖", "🐷"];
   const clockEmojis = ["⏰", "🕐", "⏳"];
@@ -1032,7 +829,7 @@ function initHoursCalc() {
         }
       }
       
-      data.hoursEntries.push(currentRoundedHours);
+      data.hoursEntries.push({value: currentRoundedHours, auto: true});
       data.totalHours += currentRoundedHours;
       
       localStorage.setItem('endOfDayData', JSON.stringify(data));
@@ -1060,433 +857,6 @@ function initHoursCalc() {
 
 function getEndOfDayHTML() {
   return `
-<style>
-  .eod-app {
-    width: 100%;
-    max-width: 420px;
-    margin: 1rem auto;
-    background-color: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-  
-  .eod-field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-  }
-  
-  .eod-field label {
-    font-size: 0.8rem;
-    color: var(--muted);
-    font-weight: 500;
-  }
-  
-  .eod-input-group {
-    display: flex;
-    gap: 0.5rem;
-  }
-  
-  .eod-field input {
-    flex: 1;
-    background-color: #0c0e13;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.65rem;
-    font-size: 1.1rem;
-    color: var(--text);
-    font-weight: 600;
-  }
-  
-  .eod-field input:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
-  
-  .eod-add-btn {
-    background-color: var(--accent);
-    border: none;
-    border-radius: 6px;
-    padding: 0.65rem 1rem;
-    color: white;
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    transition: all 0.2s;
-    white-space: nowrap;
-  }
-  
-  .eod-add-btn:hover {
-    background-color: #3d8fe6;
-  }
-  
-  .eod-summary {
-    background-color: #0c0e13;
-    border: 2px solid var(--accent);
-    border-radius: 8px;
-    padding: 1rem;
-    margin-top: 0.5rem;
-  }
-  
-  .eod-summary-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin: 0.4rem 0;
-  }
-  
-  .eod-summary-label {
-    font-size: 0.9rem;
-    color: var(--muted);
-    font-weight: 500;
-  }
-  
-  .eod-summary-value {
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: var(--text);
-  }
-  
-  .eod-hourly {
-    font-size: 1.8rem !important;
-    color: var(--accent) !important;
-    font-weight: 700 !important;
-  }
-  
-  .eod-breakdown-btn {
-    width: 100%;
-    background-color: rgba(77, 163, 255, 0.1);
-    border: 1px solid var(--accent);
-    border-radius: 6px;
-    padding: 0.5rem;
-    color: var(--accent);
-    cursor: pointer;
-    font-size: 0.8rem;
-    font-weight: 600;
-    transition: all 0.2s;
-  }
-  
-  .eod-breakdown-btn:hover {
-    background-color: rgba(77, 163, 255, 0.2);
-  }
-  
-  .eod-breakdown-btn:disabled {
-    opacity: 0.4;
-    cursor: not-allowed;
-    background-color: rgba(77, 163, 255, 0.05);
-  }
-  
-  .eod-breakdown-btn:disabled:hover {
-    background-color: rgba(77, 163, 255, 0.05);
-  }
-  
-  .eod-breakdown-modal {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.8);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-    padding: 1rem;
-  }
-  
-  .eod-breakdown-modal.show {
-    display: flex;
-  }
-  
-  .eod-breakdown-content {
-    background-color: var(--card);
-    border: 2px solid var(--accent);
-    border-radius: 12px;
-    padding: 1.5rem;
-    max-width: 400px;
-    width: 100%;
-    max-height: 80vh;
-    overflow-y: auto;
-  }
-  
-  .eod-breakdown-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    padding-bottom: 0.75rem;
-    border-bottom: 2px solid var(--border);
-  }
-  
-  .eod-breakdown-title {
-    font-size: 1.1rem;
-    font-weight: 700;
-    color: var(--accent);
-  }
-  
-  .eod-breakdown-close {
-    background-color: transparent;
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 1rem;
-    transition: all 0.2s;
-  }
-  
-  .eod-breakdown-close:hover {
-    border-color: var(--warning);
-    color: var(--warning);
-  }
-  
-  .eod-breakdown-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-  
-  .eod-breakdown-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #0c0e13;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.75rem;
-  }
-  
-  .eod-breakdown-item-left {
-    display: flex;
-    flex-direction: column;
-    gap: 0.2rem;
-  }
-  
-  .eod-breakdown-item-label {
-    font-size: 0.75rem;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .eod-breakdown-item-calc {
-    font-size: 0.85rem;
-    color: var(--muted);
-    font-family: monospace;
-  }
-  
-  .eod-breakdown-item-value {
-    font-size: 1.2rem;
-    font-weight: 700;
-    color: var(--accent);
-  }
-  
-  .eod-breakdown-total {
-    margin-top: 0.75rem;
-    padding-top: 0.75rem;
-    border-top: 2px solid var(--border);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .eod-breakdown-total-label {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text);
-  }
-  
-  .eod-breakdown-total-value {
-    font-size: 1.4rem;
-    font-weight: 700;
-    color: var(--accent);
-  }
-  
-  .eod-section {
-    margin-top: 0.5rem;
-  }
-  
-  .eod-section-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
-  }
-  
-  .eod-section-title {
-    font-size: 0.85rem;
-    color: var(--muted);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
-  
-  .eod-count {
-    font-size: 0.75rem;
-    color: var(--muted);
-    background-color: #0c0e13;
-    padding: 0.2rem 0.5rem;
-    border-radius: 4px;
-  }
-  
-  .eod-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.4rem;
-  }
-  
-  .eod-list-item {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #0c0e13;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.6rem;
-    transition: border-color 0.2s;
-  }
-  
-  .eod-list-item:hover {
-    border-color: var(--accent);
-  }
-  
-  .eod-item-label {
-    font-size: 0.85rem;
-    color: var(--muted);
-  }
-  
-  .eod-item-value {
-    font-size: 1rem;
-    font-weight: 600;
-    color: var(--text);
-    margin-right: 0.5rem;
-  }
-  
-  .eod-item-actions {
-    display: flex;
-    gap: 0.3rem;
-  }
-  
-  .eod-item-btn {
-    background-color: transparent;
-    border: 1px solid var(--border);
-    color: var(--text);
-    padding: 0.3rem 0.6rem;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 0.75rem;
-    font-weight: 500;
-    transition: all 0.2s;
-  }
-  
-  .eod-item-btn:hover {
-    border-color: var(--accent);
-    background-color: rgba(77, 163, 255, 0.1);
-  }
-  
-  .eod-item-btn.delete:hover {
-    border-color: var(--warning);
-    color: var(--warning);
-    background-color: rgba(255, 107, 107, 0.1);
-  }
-  
-  .eod-empty {
-    text-align: center;
-    color: var(--muted);
-    font-size: 0.85rem;
-    padding: 1rem;
-    background-color: #0c0e13;
-    border-radius: 6px;
-    border: 1px dashed var(--border);
-  }
-  
-  .eod-reset-btn {
-    background-color: #0c0e13;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.65rem;
-    color: var(--text);
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.85rem;
-    font-weight: 500;
-    margin-top: 0.5rem;
-  }
-  
-  .eod-reset-btn:hover {
-    border-color: var(--warning);
-    color: var(--warning);
-    background-color: rgba(255, 107, 107, 0.1);
-  }
-  
-  .eod-undo-btn {
-    background-color: #0c0e13;
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 0.65rem;
-    color: var(--text);
-    cursor: pointer;
-    transition: all 0.2s;
-    font-size: 0.85rem;
-    font-weight: 500;
-  }
-  
-  .eod-undo-btn:hover {
-    border-color: var(--accent);
-    background-color: rgba(77, 163, 255, 0.2);
-  }
-  
-  .eod-pig {
-    margin-top: 0.5rem;
-    text-align: center;
-    font-size: 1.4rem;
-    animation: bounce 2s ease-in-out infinite;
-  }
-  
-  @keyframes bounce {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-6px); }
-  }
-  
-  @media (max-width: 400px) {
-    .eod-app {
-      padding: 0.75rem;
-      gap: 0.6rem;
-      margin: 0.5rem auto;
-    }
-    
-    .eod-field input {
-      padding: 0.55rem;
-      font-size: 1rem;
-    }
-    
-    .eod-add-btn {
-      padding: 0.55rem 0.8rem;
-      font-size: 0.85rem;
-    }
-    
-    .eod-hourly {
-      font-size: 1.5rem !important;
-    }
-    
-    .eod-breakdown-content {
-      padding: 1rem;
-    }
-    
-    .eod-breakdown-item {
-      padding: 0.6rem;
-    }
-    
-    .eod-breakdown-item-value {
-      font-size: 1.1rem;
-    }
-  }
-</style>
-
 <div class="eod-app">
   <div class="eod-field">
     <label>Add Hours Worked</label>
@@ -1577,6 +947,7 @@ function getEndOfDayHTML() {
       <li><strong>Hourly Rate</strong> - Average earnings per hour (Total Tips ÷ Total Hours)</li>
       <li><strong>View Tips Breakdown</strong> - Shows calculated total tips based on the hourly rate</li>
       <li><strong>Hours/Tips Entries</strong> - Individual shift records (can edit or delete)</li>
+      <li><strong>→Sent Label</strong> - Indicates value was sent from Hours Calculator or Tip Calculator</li>
     </ul>
   </div>
 </div>`;
@@ -1601,8 +972,30 @@ function initEndOfDay() {
       const data = JSON.parse(saved);
       totalHours = data.totalHours || 0;
       totalTips = data.totalTips || 0;
-      hoursEntries = data.hoursEntries || [];
-      tipsEntries = data.tipsEntries || [];
+      
+      // Support new format with auto tracking
+      if (data.hoursEntries && data.hoursEntries.length > 0) {
+        if (typeof data.hoursEntries[0] === 'number') {
+          // Old format - convert to new
+          hoursEntries = data.hoursEntries.map(function(val) {
+            return {value: val, auto: false};
+          });
+        } else {
+          hoursEntries = data.hoursEntries;
+        }
+      }
+      
+      if (data.tipsEntries && data.tipsEntries.length > 0) {
+        if (typeof data.tipsEntries[0] === 'number') {
+          // Old format - convert to new
+          tipsEntries = data.tipsEntries.map(function(val) {
+            return {value: val, auto: false};
+          });
+        } else {
+          tipsEntries = data.tipsEntries;
+        }
+      }
+      
       updateDisplay();
     }
   }
@@ -1664,10 +1057,17 @@ function initEndOfDay() {
     
     var html = '';
     for (var i = 0; i < hoursEntries.length; i++) {
+      const entry = hoursEntries[i];
+      const value = entry.value || entry;
+      const isAuto = entry.auto || false;
+      
       html += '<div class="eod-list-item">';
       html += '<div>';
       html += '<span class="eod-item-label">Entry ' + (i + 1) + '</span> ';
-      html += '<span class="eod-item-value">' + hoursEntries[i].toFixed(2) + 'h</span>';
+      html += '<span class="eod-item-value">' + (typeof value === 'number' ? value.toFixed(2) : parseFloat(value).toFixed(2)) + 'h</span>';
+      if (isAuto) {
+        html += ' <span class="eod-sent-badge">→Sent</span>';
+      }
       html += '</div>';
       html += '<div class="eod-item-actions">';
       html += '<button class="eod-item-btn" data-index="' + i + '" data-type="hours-edit">Edit</button>';
@@ -1699,10 +1099,17 @@ function initEndOfDay() {
     
     var html = '';
     for (var i = 0; i < tipsEntries.length; i++) {
+      const entry = tipsEntries[i];
+      const value = entry.value || entry;
+      const isAuto = entry.auto || false;
+      
       html += '<div class="eod-list-item">';
       html += '<div>';
       html += '<span class="eod-item-label">Entry ' + (i + 1) + '</span> ';
-      html += '<span class="eod-item-value">$' + tipsEntries[i].toFixed(2) + '</span>';
+      html += '<span class="eod-item-value">$' + (typeof value === 'number' ? value.toFixed(2) : parseFloat(value).toFixed(2)) + '</span>';
+      if (isAuto) {
+        html += ' <span class="eod-sent-badge">→Sent</span>';
+      }
       html += '</div>';
       html += '<div class="eod-item-actions">';
       html += '<button class="eod-item-btn" data-index="' + i + '" data-type="tips-edit">Edit</button>';
@@ -1730,7 +1137,7 @@ function initEndOfDay() {
     const value = parseFloat(input.value);
     
     if (input.value && !isNaN(value) && value > 0) {
-      hoursEntries.push(value);
+      hoursEntries.push({value: value, auto: false});
       totalHours += value;
       input.value = '';
       lastDeletedItem = null;
@@ -1749,7 +1156,7 @@ function initEndOfDay() {
     
     if (input.value && !isNaN(value) && value >= 0) {
       const rounded = Math.round(value * 100) / 100;
-      tipsEntries.push(rounded);
+      tipsEntries.push({value: rounded, auto: false});
       totalTips += rounded;
       input.value = '';
       lastDeletedItem = null;
@@ -1775,51 +1182,63 @@ function initEndOfDay() {
   });
 
   function editHoursEntry(index) {
-    const currentValue = hoursEntries[index];
+    if (!hoursEntries[index]) return;
+    const entry = hoursEntries[index];
+    const currentValue = entry.value || entry;
     const newValue = prompt("Edit hours (Entry " + (index + 1) + "):", currentValue);
     
     if (newValue !== null && !isNaN(newValue) && parseFloat(newValue) > 0) {
       totalHours = totalHours - currentValue + parseFloat(newValue);
-      hoursEntries[index] = parseFloat(newValue);
+      hoursEntries[index] = {value: parseFloat(newValue), auto: false};
       saveData();
       updateDisplay();
     }
   }
 
   function deleteHoursEntry(index) {
+    if (!hoursEntries[index]) return;
+    const entry = hoursEntries[index];
+    const value = entry.value || entry;
+    
     lastDeletedItem = {
       type: 'hours',
       index: index,
-      value: hoursEntries[index]
+      entry: hoursEntries[index]
     };
     
-    totalHours -= hoursEntries[index];
+    totalHours -= value;
     hoursEntries.splice(index, 1);
     saveData();
     updateDisplay();
   }
 
   function editTipsEntry(index) {
-    const currentValue = tipsEntries[index];
-    const newValue = prompt("Edit tips (Entry " + (index + 1) + "):", currentValue.toFixed(2));
+    if (!tipsEntries[index]) return;
+    const entry = tipsEntries[index];
+    const currentValue = entry.value || entry;
+    const newValue = prompt("Edit tips (Entry " + (index + 1) + "):", (typeof currentValue === 'number' ? currentValue.toFixed(2) : parseFloat(currentValue).toFixed(2)));
     
     if (newValue !== null && !isNaN(newValue) && parseFloat(newValue) >= 0) {
       const rounded = Math.round(parseFloat(newValue) * 100) / 100;
       totalTips = totalTips - currentValue + rounded;
-      tipsEntries[index] = rounded;
+      tipsEntries[index] = {value: rounded, auto: false};
       saveData();
       updateDisplay();
     }
   }
 
   function deleteTipsEntry(index) {
+    if (!tipsEntries[index]) return;
+    const entry = tipsEntries[index];
+    const value = entry.value || entry;
+    
     lastDeletedItem = {
       type: 'tips',
       index: index,
-      value: tipsEntries[index]
+      entry: tipsEntries[index]
     };
     
-    totalTips -= tipsEntries[index];
+    totalTips -= value;
     tipsEntries.splice(index, 1);
     saveData();
     updateDisplay();
@@ -1829,11 +1248,13 @@ function initEndOfDay() {
     if (!lastDeletedItem) return;
     
     if (lastDeletedItem.type === 'hours') {
-      hoursEntries.splice(lastDeletedItem.index, 0, lastDeletedItem.value);
-      totalHours += lastDeletedItem.value;
+      hoursEntries.splice(lastDeletedItem.index, 0, lastDeletedItem.entry);
+      const value = lastDeletedItem.entry.value || lastDeletedItem.entry;
+      totalHours += value;
     } else if (lastDeletedItem.type === 'tips') {
-      tipsEntries.splice(lastDeletedItem.index, 0, lastDeletedItem.value);
-      totalTips += lastDeletedItem.value;
+      tipsEntries.splice(lastDeletedItem.index, 0, lastDeletedItem.entry);
+      const value = lastDeletedItem.entry.value || lastDeletedItem.entry;
+      totalTips += value;
     }
     
     lastDeletedItem = null;
@@ -1902,14 +1323,15 @@ function initEndOfDay() {
     var calculatedTotal = 0;
     
     for (var i = 0; i < hoursEntries.length; i++) {
-      const hours = hoursEntries[i];
+      const entry = hoursEntries[i];
+      const hours = entry.value || entry;
       const tipsForEntry = hours * hourlyRate;
       calculatedTotal += tipsForEntry;
       
       html += '<div class="eod-breakdown-item">';
       html += '<div class="eod-breakdown-item-left">';
       html += '<span class="eod-breakdown-item-label">Entry ' + (i + 1) + '</span>';
-      html += '<span class="eod-breakdown-item-calc">' + hours.toFixed(2) + 'h × $' + hourlyRate.toFixed(2) + '/h</span>';
+      html += '<span class="eod-breakdown-item-calc">' + (typeof hours === 'number' ? hours.toFixed(2) : parseFloat(hours).toFixed(2)) + 'h × $' + hourlyRate.toFixed(2) + '/h</span>';
       html += '</div>';
       html += '<span class="eod-breakdown-item-value">$' + tipsForEntry.toFixed(2) + '</span>';
       html += '</div>';
@@ -1926,7 +1348,6 @@ function initEndOfDay() {
 
   loadData();
 }
-
 // ============================================
 // SERVICE WORKER & PWA
 // ============================================
