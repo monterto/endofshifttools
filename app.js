@@ -531,7 +531,7 @@ function initTipCalc() {
     const s = parseFloat(sales.value) || 0;
     const bohP = bohPercent / 100;
     const fohP = fohPercent / 100;
-    const c = parseFloat(cash.value) || 0;
+    const c = cash ? (parseFloat(cash.value) || 0) : 0;
 
     // Calculate total large party deduction
     let largePartyTip = 0;
@@ -578,7 +578,7 @@ function initTipCalc() {
   clearBtn.addEventListener('click', function() {
     owed.value = '';
     sales.value = '';
-    cash.value = '';
+    if (cash) cash.value = '';
     largeParties = [];
     renderParties();
     loadPreset();
@@ -628,7 +628,7 @@ function initTipCalc() {
   pigDisplay.textContent = pigs[Math.floor(Math.random() * pigs.length)] + 
                           money[Math.floor(Math.random() * money.length)];
 
-  [owed, sales, cash].forEach(function(el) {
+  [owed, sales, cash].filter(function(el) { return el !== null; }).forEach(function(el) {
     el.addEventListener("input", calculate);
   });
 
