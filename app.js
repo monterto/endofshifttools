@@ -194,10 +194,12 @@ function getTipCalcHTML() {
       </div>
       <button class="tip-party-edit-btn" id="openPartyModalBtn" title="Configure Large Parties">📝</button>
     </div>
+    <!--
     <div class="tip-field">
       <label>Cash</label>
       <input id="cash" type="number" step="0.01" placeholder="0.00" inputmode="decimal" />
     </div>
+    -->
   </div>
 
   <div class="tip-secondary">
@@ -292,7 +294,6 @@ function getTipCalcHTML() {
       <li><strong>Owed</strong> - Total tips owed to you from the POS system</li>
       <li><strong>Total Net Sales</strong> - Your total net sales for the shift</li>
       <li><strong>Large Party</strong> - Click 📝 to configure parties. Enter headcount and cost per head; 1% of (headcount × cost per head) is subtracted from tips</li>
-      <li><strong>Cash</strong> - Cash tips received (added to your final tips)</li>
       <li><strong>BoH %</strong> - Percentage of sales going to Back of House staff (click 📝 to edit)</li>
       <li><strong>FoH %</strong> - Percentage of sales going to Support staff (click 📝 to edit)</li>
       <li><strong>Edit Button (📝)</strong> - Opens editor to safely change BoH% and FoH%. Changes require explicit confirmation.</li>
@@ -302,7 +303,7 @@ function getTipCalcHTML() {
       <li><strong>Tips (output)</strong> - Final tips to the tip pool</li>
     </ul>
     <div class="app-info-formula">
-      <strong>Formula:</strong> Tips = Owed - BoH - FoH - (Large Party) + Cash
+      <strong>Formula:</strong> Tips = Owed - BoH - FoH - (Large Party)
     </div>
   </div>
 </div>`;
