@@ -605,7 +605,7 @@ function initTipCalc() {
       
       const roundedTip = Math.round(currentTipValue * 100) / 100;
       data.tipsEntries.push({value: roundedTip, auto: true});
-      data.totalTips += roundedTip;
+      data.totalTips = data.tipsEntries.reduce(function(sum, e) { return sum + (e.value !== undefined ? e.value : e); }, 0);
       
       localStorage.setItem('endOfDayData', JSON.stringify(data));
       
@@ -831,7 +831,7 @@ function initHoursCalc() {
       }
       
       data.hoursEntries.push({value: currentRoundedHours, auto: true});
-      data.totalHours += currentRoundedHours;
+      data.totalHours = data.hoursEntries.reduce(function(sum, e) { return sum + (e.value !== undefined ? e.value : e); }, 0);
       
       localStorage.setItem('endOfDayData', JSON.stringify(data));
       
@@ -967,13 +967,22 @@ function initEndOfDay() {
   var tipsEntries = [];
   var lastDeletedItem = null;
 
+  // Always derive totals from entries — never trust stored running totals.
+  // This eliminates floating-point drift from repeated += / -= operations.
+  function recalculateTotals() {
+    totalHours = hoursEntries.reduce(function(sum, e) {
+      return sum + (e.value !== undefined ? e.value : e);
+    }, 0);
+    totalTips = tipsEntries.reduce(function(sum, e) {
+      return sum + (e.value !== undefined ? e.value : e);
+    }, 0);
+  }
+
   function loadData() {
     const saved = localStorage.getItem('endOfDayData');
     if (saved) {
       const data = JSON.parse(saved);
-      totalHours = data.totalHours || 0;
-      totalTips = data.totalTips || 0;
-      
+
       // Support new format with auto tracking
       if (data.hoursEntries && data.hoursEntries.length > 0) {
         if (typeof data.hoursEntries[0] === 'number') {
@@ -985,7 +994,7 @@ function initEndOfDay() {
           hoursEntries = data.hoursEntries;
         }
       }
-      
+
       if (data.tipsEntries && data.tipsEntries.length > 0) {
         if (typeof data.tipsEntries[0] === 'number') {
           // Old format - convert to new
@@ -996,7 +1005,10 @@ function initEndOfDay() {
           tipsEntries = data.tipsEntries;
         }
       }
-      
+
+      // Recompute from entries rather than trusting the stored running totals,
+      // which can drift due to floating-point arithmetic.
+      recalculateTotals();
       updateDisplay();
     }
   }
@@ -1139,7 +1151,7 @@ function initEndOfDay() {
     
     if (input.value && !isNaN(value) && value > 0) {
       hoursEntries.push({value: value, auto: false});
-      totalHours += value;
+      recalculateTotals();
       input.value = '';
       lastDeletedItem = null;
       saveData();
@@ -1158,7 +1170,7 @@ function initEndOfDay() {
     if (input.value && !isNaN(value) && value >= 0) {
       const rounded = Math.round(value * 100) / 100;
       tipsEntries.push({value: rounded, auto: false});
-      totalTips += rounded;
+      recalculateTotals();
       input.value = '';
       lastDeletedItem = null;
       saveData();
@@ -1189,8 +1201,8 @@ function initEndOfDay() {
     const newValue = prompt("Edit hours (Entry " + (index + 1) + "):", currentValue);
     
     if (newValue !== null && !isNaN(newValue) && parseFloat(newValue) > 0) {
-      totalHours = totalHours - currentValue + parseFloat(newValue);
       hoursEntries[index] = {value: parseFloat(newValue), auto: false};
+      recalculateTotals();
       saveData();
       updateDisplay();
     }
@@ -1198,17 +1210,15 @@ function initEndOfDay() {
 
   function deleteHoursEntry(index) {
     if (!hoursEntries[index]) return;
-    const entry = hoursEntries[index];
-    const value = entry.value || entry;
-    
+
     lastDeletedItem = {
       type: 'hours',
       index: index,
       entry: hoursEntries[index]
     };
-    
-    totalHours -= value;
+
     hoursEntries.splice(index, 1);
+    recalculateTotals();
     saveData();
     updateDisplay();
   }
@@ -1221,8 +1231,8 @@ function initEndOfDay() {
     
     if (newValue !== null && !isNaN(newValue) && parseFloat(newValue) >= 0) {
       const rounded = Math.round(parseFloat(newValue) * 100) / 100;
-      totalTips = totalTips - currentValue + rounded;
       tipsEntries[index] = {value: rounded, auto: false};
+      recalculateTotals();
       saveData();
       updateDisplay();
     }
@@ -1230,17 +1240,15 @@ function initEndOfDay() {
 
   function deleteTipsEntry(index) {
     if (!tipsEntries[index]) return;
-    const entry = tipsEntries[index];
-    const value = entry.value || entry;
-    
+
     lastDeletedItem = {
       type: 'tips',
       index: index,
       entry: tipsEntries[index]
     };
-    
-    totalTips -= value;
+
     tipsEntries.splice(index, 1);
+    recalculateTotals();
     saveData();
     updateDisplay();
   }
@@ -1250,14 +1258,11 @@ function initEndOfDay() {
     
     if (lastDeletedItem.type === 'hours') {
       hoursEntries.splice(lastDeletedItem.index, 0, lastDeletedItem.entry);
-      const value = lastDeletedItem.entry.value || lastDeletedItem.entry;
-      totalHours += value;
     } else if (lastDeletedItem.type === 'tips') {
       tipsEntries.splice(lastDeletedItem.index, 0, lastDeletedItem.entry);
-      const value = lastDeletedItem.entry.value || lastDeletedItem.entry;
-      totalTips += value;
     }
     
+    recalculateTotals();
     lastDeletedItem = null;
     saveData();
     updateDisplay();
