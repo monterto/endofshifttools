@@ -788,9 +788,10 @@ function getEndOfDayHTML() {
     addFormHTML('tipsForm', 'tipsInput', 'tipsStatus', 'Add tip contribution') +
     '</section>' +
 
+    // Same order as the totals on the spreadsheet: tips, then hours.
     '<section class="stats">' +
-    '  <div class="stat"><span class="stat-label">Total hours</span><span class="stat-value" id="totalHours">0.00</span></div>' +
     '  <div class="stat"><span class="stat-label">Tip pool</span><span class="stat-value" id="totalTips">$0.00</span></div>' +
+    '  <div class="stat"><span class="stat-label">Total hours</span><span class="stat-value" id="totalHours">0.00</span></div>' +
     '  <div class="stat accent"><span class="stat-label">Per hour</span><span class="stat-value" id="hourlyRate">$0.00</span></div>' +
     '</section>' +
 
