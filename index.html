@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>End of Shift Tools</title>
-  
+
   <!-- PWA Manifest -->
   <link rel="manifest" href="./manifest.json">
-  
+
   <!-- Theme colors -->
   <meta name="theme-color" content="#4da3ff">
   <meta name="msapplication-TileColor" content="#4da3ff">
-  
+
   <!-- iOS specific meta tags -->
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -19,94 +19,96 @@
   <link rel="apple-touch-icon" href="./icon-192.png">
   <link rel="apple-touch-icon" sizes="192x192" href="./icon-192.png">
   <link rel="apple-touch-icon" sizes="512x512" href="./icon-512.png">
-  
+
   <!-- Standard favicon -->
   <link rel="icon" type="image/png" sizes="192x192" href="./icon-192.png">
   <link rel="icon" type="image/png" sizes="512x512" href="./icon-512.png">
-  
+
   <!-- Windows tiles -->
   <meta name="msapplication-TileImage" content="./icon-512.png">
-  
+
   <!-- Stylesheets -->
   <link rel="stylesheet" href="./styles.css">
 </head>
 <body>
-  <div id="hubView">
-    <div class="hub-header">
-      <h1><span id="hubEmoji">🐷</span> End of Shift Tools</h1>
-    </div>
+  <!-- ============ HUB ============ -->
+  <div id="hubView" class="hub">
+    <header class="hub-header">
+      <h1><span class="hub-pig" id="hubEmoji">🐖</span> <span class="hub-title">End of Shift Tools</span></h1>
+    </header>
 
-    <div class="clear-data-alert" id="clearDataAlert">
-      <div class="clear-data-icon">⚠️</div>
-      <div class="clear-data-text">
-        <strong>Old Data Detected</strong>
+    <div class="alert" id="clearDataAlert" role="alert">
+      <div class="alert-icon">⚠️</div>
+      <div class="alert-text">
+        <strong>Old End of Day data</strong>
         <p id="dataAgeText">Data from earlier is still saved</p>
       </div>
-      <div class="clear-data-actions">
-        <button class="clear-action-btn keep" id="keepDataBtn">Keep</button>
-        <button class="clear-action-btn clear" id="clearDataBtn">Clear</button>
+      <div class="alert-actions">
+        <button class="btn btn-secondary" id="keepDataBtn" type="button">Keep</button>
+        <button class="btn btn-danger" id="clearDataBtn" type="button">Clear</button>
       </div>
     </div>
 
-    <div class="app-grid">
-      <div class="app-card" id="hoursCalcCard">
-        <span class="app-icon">⏰</span>
-        <h3>Hours Calculator</h3>
-        <p>Track work hours with exact and rounded time</p>
-      </div>
-
-      <div class="app-card" id="tipCalcCard">
-        <span class="app-icon">💰</span>
-        <h3>Tip Breakdown</h3>
-        <p>Calculate tip distribution between BoH, FoH, and final tips</p>
-      </div>
-
-      <div class="app-card" id="endOfDayCard">
-        <span class="app-icon">📊</span>
-        <h3>End of Day</h3>
-        <p>Calculate hourly rate from hours and tips</p>
-      </div>
-    </div>
-
-    <button class="info-button" id="infoBtn" title="Installation Instructions"></button>
-
-    <div class="info-modal" id="infoModal">
-      <div class="info-content">
-        <h2>📱 Install as an App</h2>
-        <p>Install End of Shift Tools on your phone for quick access and offline use!</p>
-        
-        <h3>iPhone/iPad (Safari)</h3>
-        <ol>
-          <li>Tap the <strong>Share button</strong> (square with arrow ↑)</li>
-          <li>Scroll down and tap <strong>"Add to Home Screen"</strong></li>
-          <li>Tap <strong>"Add"</strong> in the top right</li>
-        </ol>
-        
-        <h3>Android (Chrome)</h3>
-        <ol>
-          <li>Tap the <strong>three-dot menu</strong> (⋮)</li>
-          <li>Tap <strong>"Add to Home screen"</strong> or <strong>"Install app"</strong></li>
-          <li>Tap <strong>"Install"</strong></li>
-        </ol>
-        
-        <button class="close-modal" id="closeModalBtn">Got it!</button>
-      </div>
-    </div>
-  </div>
-
-  <div id="appView">
-    <div class="app-header">
-      <button class="back-btn" id="backBtn">
-        <span>←</span>
-        <span>Back to Hub</span>
+    <nav class="tool-list" aria-label="Tools">
+      <button class="tool-card" id="tipCalcCard" type="button">
+        <span class="tool-icon" aria-hidden="true">💰</span>
+        <span>
+          <span class="tool-name">Tip Breakdown</span>
+          <span class="tool-desc">Your hours, tip-outs and tip contribution for the sheet</span>
+        </span>
+        <span class="tool-chevron" aria-hidden="true">›</span>
       </button>
-      <div class="app-title" id="currentAppTitle"></div>
-      <button class="app-info-btn" id="appInfoBtn" title="Field Explanations"></button>
+
+      <button class="tool-card" id="endOfDayCard" type="button">
+        <span class="tool-icon" aria-hidden="true">📊</span>
+        <span>
+          <span class="tool-name">End of Day</span>
+          <span class="tool-desc">Split the tip pool by hours (last worker of the day)</span>
+        </span>
+        <span class="tool-chevron" aria-hidden="true">›</span>
+      </button>
+    </nav>
+
+    <button class="icon-btn fab" id="infoBtn" type="button" aria-label="How to install"><span class="info-glyph">i</span></button>
+
+    <div class="modal" id="infoModal" role="dialog" aria-modal="true" aria-labelledby="installTitle">
+      <div class="modal-card">
+        <div class="modal-header">
+          <span class="modal-title" id="installTitle">📱 Install as an app</span>
+          <button class="icon-btn plain" type="button" data-close aria-label="Close">✕</button>
+        </div>
+        <p class="card-note" style="margin-top:0">Install End of Shift Tools on your phone for quick access and offline use.</p>
+        <div class="help-section">
+          <h3>iPhone / iPad (Safari)</h3>
+          <ol>
+            <li>Tap the <strong>Share</strong> button (square with arrow ↑)</li>
+            <li>Scroll down and tap <strong>Add to Home Screen</strong></li>
+            <li>Tap <strong>Add</strong> in the top right</li>
+          </ol>
+        </div>
+        <div class="help-section">
+          <h3>Android (Chrome)</h3>
+          <ol>
+            <li>Tap the <strong>three-dot menu</strong> (⋮)</li>
+            <li>Tap <strong>Add to Home screen</strong> or <strong>Install app</strong></li>
+            <li>Tap <strong>Install</strong></li>
+          </ol>
+        </div>
+        <button class="btn btn-primary btn-block" type="button" data-close style="margin-top:1rem">Got it</button>
+      </div>
     </div>
-    <div class="app-content" id="appContainer"></div>
   </div>
 
-  <!-- JavaScript -->
+  <!-- ============ TOOL VIEW ============ -->
+  <div id="appView">
+    <header class="topbar">
+      <button class="icon-btn plain" id="backBtn" type="button" aria-label="Back to tools">←</button>
+      <h2 class="topbar-title" id="currentAppTitle"></h2>
+      <button class="icon-btn" id="appInfoBtn" type="button" aria-label="Field explanations"><span class="info-glyph">i</span></button>
+    </header>
+    <main class="screen" id="appContainer"></main>
+  </div>
+
   <script src="./app.js"></script>
 </body>
 </html>
