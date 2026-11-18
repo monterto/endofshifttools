@@ -19,10 +19,18 @@ const FEATURES = {
 
 const OLD_DATA_MS = 2 * 60 * 60 * 1000; // "old" = more than 2 hours
 const KEYS = {
-  endOfDay: 'endOfDayData',
+  endOfDay: 'endOfDayData',               // server pool (original key, kept so saved data carries over)
+  endOfDaySupport: 'endOfDaySupportData', // support staff pool
+  eodPool: 'endOfDayPool',                // which pool is showing (sessionStorage)
   percents: 'tipCalcPreset',
   tipDraft: 'tipCalcDraft',
   lastApp: 'lastActiveApp'
+};
+
+// End of Day's two tip pools: same screen, separate data.
+const POOLS = {
+  server:  { key: KEYS.endOfDay,        emoji: '🍽️', name: 'Servers', noun: 'server' },
+  support: { key: KEYS.endOfDaySupport, emoji: '🤝', name: 'Support', noun: 'support' }
 };
 
 // ---------- Pigs 🐷 ----------
@@ -181,11 +189,18 @@ function alertHTML(id, title, textId, keepId, clearId) {
 // HUB
 // ============================================
 
+// Start time of the oldest saved End of Day pool (servers or support), or 0.
+function oldestEndOfDayStart() {
+  return Object.keys(POOLS).reduce(function(oldest, id) {
+    const data = readJSON(POOLS[id].key);
+    const t = data && data.sessionStartTime;
+    return t && (!oldest || t < oldest) ? t : oldest;
+  }, 0);
+}
+
 function checkForOldData() {
-  const data = readJSON(KEYS.endOfDay);
-  if (!data || !data.sessionStartTime) return;
-  const age = Date.now() - data.sessionStartTime;
-  if (age > OLD_DATA_MS) showOldDataAlert(data.sessionStartTime);
+  const start = oldestEndOfDayStart();
+  if (start && Date.now() - start > OLD_DATA_MS) showOldDataAlert(start);
 }
 
 function showOldDataAlert(savedAt) {
@@ -201,8 +216,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const pig = $('hubEmoji');
     pig.classList.add('debug-enabled');
     pig.addEventListener('click', function() {
-      const data = readJSON(KEYS.endOfDay);
-      showOldDataAlert((data && data.sessionStartTime) || Date.now() - 3 * 3600000);
+      showOldDataAlert(oldestEndOfDayStart() || Date.now() - 3 * 3600000);
     });
   }
 
@@ -213,7 +227,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   $('keepDataBtn').addEventListener('click', function() { $('clearDataAlert').classList.remove('show'); });
   $('clearDataBtn').addEventListener('click', function() {
-    removeKey(KEYS.endOfDay);
+    Object.keys(POOLS).forEach(function(id) { removeKey(POOLS[id].key); });
     $('clearDataAlert').classList.remove('show');
   });
 
@@ -234,6 +248,7 @@ document.addEventListener('DOMContentLoaded', function() {
 function loadApp(appName) {
   $('hubView').style.display = 'none';
   $('appView').classList.add('active');
+  $('appView').removeAttribute('data-pool');   // End of Day sets it again
   try { localStorage.setItem(KEYS.lastApp, appName); } catch (e) { /* ignore */ }
   history.pushState({ app: appName }, '', '');
   window.scrollTo(0, 0);
@@ -253,6 +268,7 @@ function loadApp(appName) {
 
 function showHub() {
   $('appView').classList.remove('active');
+  $('appView').removeAttribute('data-pool');
   $('hubView').style.display = 'flex';
   $('appContainer').innerHTML = '';
   removeKey(KEYS.lastApp);
@@ -735,21 +751,41 @@ function initTipCalc() {
 // END OF DAY (tip pool, for the last worker)
 // ============================================
 
+// Each "Add" box is its own little form, for fast entry straight off the
+// sheet: type 4, Enter, 5, Enter, 3, Enter. Being alone in its form (plus
+// enterkeyhint) makes the phone keyboard show an Enter key that adds the
+// number, instead of a "Next" key that jumps to the other box.
+function addFormHTML(formId, inputId, statusId, label) {
+  return '' +
+    '<form class="field" id="' + formId + '" novalidate>' +
+    '  <div class="field-label-row"><label class="field-label" for="' + inputId + '">' + label + '</label>' +
+    '    <span class="field-status" id="' + statusId + '" aria-live="polite"></span></div>' +
+    '  <div class="input-row">' +
+    '    <input class="input" type="number" id="' + inputId + '" placeholder="0.00" step="0.01" min="0" inputmode="decimal" enterkeyhint="enter" autocomplete="off">' +
+    '    <button class="btn btn-primary" type="submit">Add</button>' +
+    '  </div>' +
+    '</form>';
+}
+
 function getEndOfDayHTML() {
   return '' +
+    // The screen is tinted by #appView's data-pool (see showPool):
+    // blue for servers, purple for support.
+    '<div class="eod" id="eodRoot">' +
+
+    // Which pool you're working on. Same screen and tools for both; each
+    // pool keeps its own hours and tips. (BoH is worked out by their own
+    // staff, so it doesn't need one.)
+    '<div class="segmented" role="tablist" aria-label="Whose tips">' +
+    Object.keys(POOLS).map(function(id) {
+      return '<button type="button" role="tab" id="poolTab-' + id + '" data-pool="' + id + '" aria-selected="false">' +
+        '<span aria-hidden="true">' + POOLS[id].emoji + '</span> ' + POOLS[id].name + '</button>';
+    }).join('') +
+    '</div>' +
+
     '<section class="card">' +
-    '  <label class="field"><span class="field-label">Add hours</span>' +
-    '    <div class="input-row">' +
-    '      <input class="input" type="number" id="hoursInput" placeholder="0.00" step="0.01" min="0" inputmode="decimal">' +
-    '      <button class="btn btn-primary" id="addHoursBtn" type="button">Add</button>' +
-    '    </div>' +
-    '  </label>' +
-    '  <label class="field"><span class="field-label">Add tip contribution</span>' +
-    '    <div class="input-row">' +
-    '      <input class="input" type="number" id="tipsInput" placeholder="0.00" step="0.01" min="0" inputmode="decimal">' +
-    '      <button class="btn btn-primary" id="addTipsBtn" type="button">Add</button>' +
-    '    </div>' +
-    '  </label>' +
+    addFormHTML('hoursForm', 'hoursInput', 'hoursStatus', 'Add hours') +
+    addFormHTML('tipsForm', 'tipsInput', 'tipsStatus', 'Add tip contribution') +
     '</section>' +
 
     '<section class="stats">' +
@@ -758,10 +794,11 @@ function getEndOfDayHTML() {
     '  <div class="stat accent"><span class="stat-label">Per hour</span><span class="stat-value" id="hourlyRate">$0.00</span></div>' +
     '</section>' +
 
+    '<button class="btn btn-secondary btn-block" id="sharesBtn" type="button">💵 See tip breakdown</button>' +
+
     '<section class="card">' +
-    '  <div class="card-label-row"><span class="card-label">Shares by hours</span><span class="count" id="hoursCount">0 entries</span></div>' +
+    '  <div class="card-label-row"><span class="card-label">Hours</span><span class="count" id="hoursCount">0 entries</span></div>' +
     '  <div class="rows" id="hoursList"></div>' +
-    '  <p class="card-note" id="shareNote"></p>' +
     '</section>' +
 
     '<section class="card">' +
@@ -770,22 +807,46 @@ function getEndOfDayHTML() {
     '</section>' +
 
     '<button class="btn btn-secondary btn-block" id="undoBtn" type="button" style="display:none">↶ Undo last delete</button>' +
-    '<button class="btn btn-danger-outline btn-block" id="resetBtn" type="button">🗑️ Clear all data</button>' +
+    '<button class="btn btn-danger-outline btn-block" id="resetBtn" type="button">🗑️ Clear data</button>' +
     '<div class="pigs" id="pigDisplay" aria-hidden="true"></div>' +
 
+    // Each person's share: tucked into a pop-up, since it's only checked
+    // when someone asks what they made.
+    '<div class="modal" id="sharesModal" role="dialog" aria-modal="true" aria-labelledby="sharesTitle">' +
+    '  <div class="modal-card">' +
+    '    <div class="modal-header">' +
+    '      <span class="modal-title" id="sharesTitle">Tip breakdown</span>' +
+    '      <button class="icon-btn plain" type="button" data-close aria-label="Close">✕</button>' +
+    '    </div>' +
+    '    <div class="rows" id="sharesList"></div>' +
+    '    <p class="card-note" id="shareNote"></p>' +
+    '  </div>' +
+    '</div>' +
+
     helpModalHTML('eodInfoModal', [
-      ['Add hours', 'Each person\'s hours from the sheet, in row order.'],
-      ['Add tip contribution', 'Each person\'s tip contribution from the sheet.'],
+      [POOLS.server.emoji + ' Servers / ' + POOLS.support.emoji + ' Support', 'Two separate tip pools, each with its own hours and tips. Switch between them at the top; support is shown in purple so you can tell at a glance.'],
+      ['Add hours', 'Each person\'s hours from the sheet, in row order. Press Enter (or Add) and the box clears, ready for the next number.'],
+      ['Add tip contribution', 'Each person\'s tip contribution from the sheet, entered the same way.'],
       ['Tip pool', 'All tip contributions added together.'],
       ['Per hour', 'Tip pool ÷ total hours.'],
-      ['Shares by hours', 'Each hours entry\'s share of the pool, in the same order: write these in the last column. Shares are rounded to the cent and always add up to the pool exactly.'],
+      ['See tip breakdown', 'Each person\'s share of the pool, in the same order as the hours. Shares are rounded to the cent and always add up to the pool exactly.'],
       ['Edit / ✕', 'Fix or remove an entry. ↶ Undo brings back the last one removed.'],
-      ['Old data', 'If this data is more than 2 hours old, the main screen offers to clear it.']
-    ], 'Share = Tip pool × (your hours ÷ total hours)');
+      ['Clear data', 'Clears the pool you\'re on. If any data is more than 2 hours old, the main screen offers to clear it all.']
+    ], 'Share = Tip pool × (your hours ÷ total hours)') +
+
+    '</div>';
 }
 
 function initEndOfDay() {
   $('pigDisplay').textContent = pick(PIGS) + pick(DRINKS);
+
+  // Which pool is showing. Remembered for this visit only (sessionStorage),
+  // so an update reload keeps your place but a fresh open starts on Servers.
+  let poolId = 'server';
+  try {
+    const saved = sessionStorage.getItem(KEYS.eodPool);
+    if (POOLS[saved]) poolId = saved;
+  } catch (e) { /* ignore */ }
 
   let hoursEntries = [];
   let tipsEntries = [];
@@ -799,19 +860,19 @@ function initEndOfDay() {
   }
 
   function load() {
-    const data = readJSON(KEYS.endOfDay);
-    if (!data) return;
-    hoursEntries = normalize(data.hoursEntries);
-    tipsEntries = normalize(data.tipsEntries);
+    const data = readJSON(POOLS[poolId].key);
+    hoursEntries = data ? normalize(data.hoursEntries) : [];
+    tipsEntries = data ? normalize(data.tipsEntries) : [];
   }
 
   function save() {
+    const key = POOLS[poolId].key;
     if (hoursEntries.length === 0 && tipsEntries.length === 0) {
-      removeKey(KEYS.endOfDay);
+      removeKey(key);
       return;
     }
-    const existing = readJSON(KEYS.endOfDay);
-    writeJSON(KEYS.endOfDay, {
+    const existing = readJSON(key);
+    writeJSON(key, {
       // Kept from the first entry, so the hub's "old data" check knows its age.
       sessionStartTime: (existing && existing.sessionStartTime) || Date.now(),
       totalHours: sumEntries(hoursEntries),
@@ -852,7 +913,7 @@ function initEndOfDay() {
 
     $('hoursList').innerHTML = hoursEntries.length
       ? hoursEntries.map(function(e, i) {
-          return entryRow(i, entryValue(e).toFixed(2) + ' h' + sentBadge(e), shares[i] !== null ? fmtMoney(shares[i]) : '', 'hours');
+          return entryRow(i, entryValue(e).toFixed(2) + ' h' + sentBadge(e), '', 'hours');
         }).join('')
       : '<div class="empty-state">No hours added yet</div>';
 
@@ -862,18 +923,43 @@ function initEndOfDay() {
         }).join('')
       : '<div class="empty-state">No tip contributions added yet</div>';
 
+    // "3 entered · last 3.00" next to each box: confirms the number went in
+    // and shows which row of the sheet you're on, without scrolling.
+    $('hoursStatus').textContent = statusText(hoursEntries, function(v) { return v.toFixed(2) + ' h'; });
+    $('tipsStatus').textContent = statusText(tipsEntries, fmtMoney);
+
+    // The shares pop-up
+    $('sharesList').innerHTML = hoursEntries.length
+      ? hoursEntries.map(function(e, i) {
+          return '<div class="row"><span class="row-label">#' + (i + 1) + ' · ' + entryValue(e).toFixed(2) + ' h</span>' +
+            '<span class="row-value' + (pool > 0 ? '' : ' empty') + '">' + (pool > 0 ? fmtMoney(shares[i]) : '—') + '</span></div>';
+        }).join('')
+      : '<div class="empty-state">Add hours to see each share</div>';
+
     $('shareNote').textContent = (hoursEntries.length && pool > 0)
-      ? 'Shares add up to ' + fmtMoney(pool) + ' exactly.'
+      ? fmtMoney(rate) + ' per hour. Shares add up to ' + fmtMoney(pool) + ' exactly.'
       : (hoursEntries.length ? 'Add tip contributions to see each share.' : '');
 
     $('undoBtn').style.display = lastDeleted ? '' : 'none';
   }
 
-  function addEntry(inputId, list, allowZero) {
+  function statusText(list, fmt) {
+    if (!list.length) return '';
+    return list.length + ' entered · last ' + fmt(entryValue(list[list.length - 1]));
+  }
+
+  function flash(el) {
+    el.classList.remove('pop');
+    void el.offsetWidth;   // restart the animation
+    el.classList.add('pop');
+  }
+
+  function addEntry(inputId, statusId, list, allowZero) {
     const input = $(inputId);
     const value = parseFloat(input.value);
     if (input.value === '' || isNaN(value) || value < 0 || (!allowZero && value === 0)) {
       input.classList.add('error');
+      input.focus();
       return;
     }
     input.classList.remove('error');
@@ -882,16 +968,29 @@ function initEndOfDay() {
     lastDeleted = null;
     save();
     render();
-    input.focus();
+    flash($(statusId));
+    input.focus();   // stay in the same box for the next number
   }
 
-  $('addHoursBtn').addEventListener('click', function() { addEntry('hoursInput', hoursEntries, false); });
-  $('addTipsBtn').addEventListener('click', function() { addEntry('tipsInput', tipsEntries, true); });
-  $('hoursInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') $('addHoursBtn').click(); });
-  $('tipsInput').addEventListener('keydown', function(e) { if (e.key === 'Enter') $('addTipsBtn').click(); });
+  // Enter in a box, or tapping its Add button, submits that box's form.
+  $('hoursForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    addEntry('hoursInput', 'hoursStatus', hoursEntries, false);
+  });
+  $('tipsForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    addEntry('tipsInput', 'tipsStatus', tipsEntries, true);
+  });
+  ['hoursForm', 'tipsForm'].forEach(function(id) {
+    // Tapping Add shouldn't steal focus from the box, so the phone keyboard
+    // stays up instead of closing and reopening.
+    $(id).querySelector('button[type="submit"]').addEventListener('mousedown', function(e) { e.preventDefault(); });
+  });
   ['hoursInput', 'tipsInput'].forEach(function(id) {
     $(id).addEventListener('input', function() { this.classList.remove('error'); });
   });
+
+  $('sharesBtn').addEventListener('click', function() { openModal($('sharesModal')); });
 
   // Edit / delete (one listener per list, so re-rendering doesn't pile them up)
   function onListClick(e) {
@@ -931,17 +1030,49 @@ function initEndOfDay() {
   });
 
   $('resetBtn').addEventListener('click', function() {
-    if (!confirm('Clear all hours and tips data? This cannot be undone.')) return;
+    if (!confirm('Clear all ' + POOLS[poolId].noun + ' hours and tips? This cannot be undone.')) return;
     hoursEntries = [];
     tipsEntries = [];
     lastDeleted = null;
-    removeKey(KEYS.endOfDay);
+    removeKey(POOLS[poolId].key);
     render();
+  });
+
+  // ---------- Servers / Support switch ----------
+  // Everything that says whose tips these are: the switch itself, the
+  // screen's color, the pop-up title and the clear button.
+  function showPool() {
+    const p = POOLS[poolId];
+    $('appView').setAttribute('data-pool', poolId);   // tints the top bar too
+    Object.keys(POOLS).forEach(function(id) {
+      $('poolTab-' + id).setAttribute('aria-selected', id === poolId ? 'true' : 'false');
+    });
+    $('sharesTitle').textContent = p.emoji + ' ' + p.noun.charAt(0).toUpperCase() + p.noun.slice(1) + ' tip breakdown';
+    $('resetBtn').textContent = '🗑️ Clear ' + p.noun + ' data';
+  }
+
+  function switchPool(id) {
+    if (id === poolId || !POOLS[id]) return;
+    poolId = id;
+    try { sessionStorage.setItem(KEYS.eodPool, id); } catch (e) { /* ignore */ }
+    ['hoursInput', 'tipsInput'].forEach(function(inputId) {
+      $(inputId).value = '';
+      $(inputId).classList.remove('error');
+    });
+    lastDeleted = null;   // undo belongs to the pool it came from
+    load();
+    showPool();
+    render();
+  }
+
+  Object.keys(POOLS).forEach(function(id) {
+    $('poolTab-' + id).addEventListener('click', function() { switchPool(id); });
   });
 
   $('appInfoBtn').onclick = function() { openModal($('eodInfoModal')); };
 
   load();
+  showPool();
   render();
 }
 
