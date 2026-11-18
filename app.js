@@ -949,9 +949,29 @@ function initEndOfDay() {
 // SERVICE WORKER (offline support)
 // ============================================
 
+// Getting updates onto phones: an installed app is often resumed from the
+// background rather than reloaded, so it never noticed a new version. Now it
+// checks whenever it's opened or brought back to the front, and when a new
+// version takes over it reloads once so you're actually running it. That's
+// safe here because everything you type is saved as you go.
 if ('serviceWorker' in navigator) {
+  // Only reload when an existing version is being REPLACED — on the very
+  // first visit there's nothing to replace.
+  const hadController = !!navigator.serviceWorker.controller;
+  let reloading = false;
+  navigator.serviceWorker.addEventListener('controllerchange', function() {
+    if (!hadController || reloading) return;
+    reloading = true;
+    window.location.reload();
+  });
+
   window.addEventListener('load', function() {
-    navigator.serviceWorker.register('./service-worker.js').catch(function(err) {
+    navigator.serviceWorker.register('./service-worker.js').then(function(reg) {
+      reg.update();
+      document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') reg.update();
+      });
+    }).catch(function(err) {
       console.error('Service Worker registration failed:', err);
     });
   });
