@@ -1,6 +1,6 @@
 // Bump VERSION on every deploy that changes app files. Both caches follow it,
 // so nothing from an older version can linger.
-const VERSION = 'v20';
+const VERSION = 'v21';
 const CACHE_NAME = 'calculator-hub-' + VERSION;
 const RUNTIME_CACHE = 'calculator-hub-runtime-' + VERSION;
 
